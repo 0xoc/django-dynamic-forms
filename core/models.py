@@ -1,6 +1,7 @@
 from django.db import models
 from .element_types import element_types, INPUT
 
+
 class Form(models.Model):
     """ Form """
     pass
