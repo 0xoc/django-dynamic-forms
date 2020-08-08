@@ -1,3 +1,5 @@
+from abc import ABC
+
 from django.db import models
 from .element_types import element_types, INPUT
 
@@ -27,3 +29,15 @@ class Element(models.Model):
     """  """
     title = models.CharField(max_length=255)
     type = models.CharField(max_length=3, choices=element_types, default=INPUT)
+
+    # array of available filters on an element
+    filters = []
+
+    @property
+    def data(self):
+        return None
+
+
+class Input(Element):
+    """ Simple Text Input """
+    pass
