@@ -2,7 +2,7 @@ from abc import ABC
 
 from django.db import models
 from .element_types import element_types, INPUT
-
+from django.utils.dateparse import parse_datetime
 
 class Form(models.Model):
     """ Form """
@@ -37,23 +37,35 @@ class Element(models.Model):
     # this field should be set according to the data type
     # Ex.: a simple text filed may be stored in CharField
     # Ex.: to store a datetime, value may be DateTimeField
-    value = models.CharField(max_length=1024)
+    # value = models.CharField(max_length=1024, blank=True, null=True)
 
     # array of available filters on an element
-    filters = ['icontains', 'startswith', 'endswith']
-
-    def to_representation(self):
-        """External representation of the value"""
-        pass
-
-    def to_internal_value(self, raw_value):
-        """ convert external(raw) value to internal value """
-
-    @property
-    def data(self):
-        return None
+    # filters = ['icontains', 'startswith', 'endswith']
 
 
 class Input(Element):
     """ Simple Text Input """
-    pass
+    value = models.CharField(max_length=1024, blank=True, null=True)
+    filters = ['icontains', 'startswith', 'endswith']
+
+
+class DateTimeElement(Element):
+    """Date time field """
+
+    value = models.DateTimeField(blank=True, null=True)
+    filters = ['gt', 'lt']
+
+
+class SelectElement(Element, models.Model):
+    """Html select element with options """
+
+    value = models.CharField(max_length=1024, blank=True, null=True)
+    filters = ['',] # empty filter stirng means exact match
+
+
+class Option(models.Model):
+        """ An option in the select element """
+        value = models.CharField(max_length=255)
+        display = models.CharField(max_length=255)
+
+        select_form = models.ForeignKey("SelectElement", related_name="options", on_delete=models.CASCADE)
