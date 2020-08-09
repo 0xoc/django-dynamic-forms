@@ -1,9 +1,5 @@
-from abc import ABC
-
 from django.db import models
 from .element_types import element_types, INPUT
-from django.utils.dateparse import parse_datetime
-from rest_framework import serializers
 
 
 class Form(models.Model):
@@ -32,6 +28,18 @@ class Element(models.Model):
     Base class for an input element (defaults to simple text field)
     value and filters fields may be overridden
     to cope with other input types
+
+    # this field should be set according to the data type
+    # Ex.: a simple text filed may be stored in CharField
+    # Ex.: to store a datetime, value may be DateTimeField
+    value = models.CharField(max_length=1024, blank=True, null=True)
+
+    # array of available filters on an elements
+    filters = ['icontains', 'startswith', 'endswith']
+
+    all sub classes of element will be related to a sub form with a related named of the
+    following format: fields_class_name, where class_name is the name of the subclass :)
+
     """
     title = models.CharField(max_length=255)
     type = models.CharField(max_length=3, choices=element_types, default=INPUT)
@@ -40,14 +48,6 @@ class Element(models.Model):
 
     class Meta:
         abstract = True
-
-    # this field should be set according to the data type
-    # Ex.: a simple text filed may be stored in CharField
-    # Ex.: to store a datetime, value may be DateTimeField
-    # value = models.CharField(max_length=1024, blank=True, null=True)
-
-    # array of available filters on an element
-    # filters = ['icontains', 'startswith', 'endswith']
 
 
 class Input(Element):
@@ -64,7 +64,7 @@ class DateTimeElement(Element):
 
 
 class SelectElement(Element):
-    """Html select element with options """
+    """Html select element with options"""
 
     value = models.CharField(max_length=1024, blank=True, null=True)
     filters = ['', ]  # empty filter string means exact match
