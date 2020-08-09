@@ -4,7 +4,7 @@ from core.models import Input, Data, DateTimeElement, SelectElement, SubForm
 from core.sub_form_fields import get_related_fields
 from .element_types import INPUT, SELECT, DATE, DATETIME, RADIO, RANGE, CHECKBOX, TIME
 
-base_fields = ['pk', 'title', 'type', 'filters']
+base_fields = ['pk', 'title', 'type', 'filters', 'order']
 
 
 class DataSerializer(serializers.ModelSerializer):
@@ -48,7 +48,8 @@ class SubFormRetrieveSerializer(serializers.ModelSerializer):
         model = SubForm
         fields = ['pk', 'title', 'description', 'elements']
 
-    def get_elements(self, instance):
+    @staticmethod
+    def get_elements(instance):
         _fields = get_related_fields(instance)
         _fields_data = []
 
