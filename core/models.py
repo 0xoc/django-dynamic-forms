@@ -3,6 +3,7 @@ from abc import ABC
 from django.db import models
 from .element_types import element_types, INPUT
 from django.utils.dateparse import parse_datetime
+from rest_framework import serializers
 
 
 class Form(models.Model):
@@ -35,6 +36,11 @@ class Element(models.Model):
     title = models.CharField(max_length=255)
     type = models.CharField(max_length=3, choices=element_types, default=INPUT)
 
+    sub_form = models.ForeignKey(SubForm, related_name="fields_%(class)s", on_delete=models.CASCADE)
+
+    class Meta:
+        abstract = True
+
     # this field should be set according to the data type
     # Ex.: a simple text filed may be stored in CharField
     # Ex.: to store a datetime, value may be DateTimeField
@@ -49,8 +55,6 @@ class Input(Element):
     value = models.CharField(max_length=1024, blank=True, null=True)
     filters = ['icontains', 'startswith', 'endswith']
 
-    sub_form = models.ForeignKey(SubForm, related_name="inputs", on_delete=models.CASCADE)
-
 
 class DateTimeElement(Element):
     """Date time field """
@@ -58,21 +62,17 @@ class DateTimeElement(Element):
     value = models.DateTimeField(blank=True, null=True)
     filters = ['gt', 'lt']
 
-    sub_form = models.ForeignKey(SubForm, related_name="date_times", on_delete=models.CASCADE)
 
-
-class SelectElement(Element, models.Model):
+class SelectElement(Element):
     """Html select element with options """
 
     value = models.CharField(max_length=1024, blank=True, null=True)
     filters = ['', ]  # empty filter string means exact match
 
-    sub_form = models.ForeignKey(SubForm, related_name="selects", on_delete=models.CASCADE)
+    data = models.ManyToManyField("Data")
 
 
-class Option(models.Model):
-    """ An option in the select element """
+class Data(models.Model):
+    """ Extra data used on select, radio, checkbox elements"""
     value = models.CharField(max_length=255)
     display = models.CharField(max_length=255)
-
-    select_form = models.ForeignKey("SelectElement", related_name="options", on_delete=models.CASCADE)
