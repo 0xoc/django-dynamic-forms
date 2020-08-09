@@ -59,3 +59,20 @@ class SubFormRetrieveSerializer(serializers.ModelSerializer):
             _fields_data.append(_field_data)
 
         return _fields_data
+
+
+class SubFormRawCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SubForm
+        fields = ['pk', 'title', 'description']
+
+
+class SubFormCreateSerializer(serializers.ModelSerializer):
+    elements = serializers.JSONField()
+
+    class Meta:
+        model = SubForm
+        fields = ['pk', 'title', 'description', 'elements']
+
+    def create(self, validated_data):
+        print(validated_data.get('elements'))

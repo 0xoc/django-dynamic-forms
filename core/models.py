@@ -44,6 +44,7 @@ class Element(models.Model):
     title = models.CharField(max_length=255)
     type = models.CharField(max_length=3, choices=element_types, default=INPUT)
 
+    # display order of the field
     order = models.IntegerField(default=0)
 
     sub_form = models.ForeignKey(SubForm, related_name="fields_%(class)s", on_delete=models.CASCADE)
