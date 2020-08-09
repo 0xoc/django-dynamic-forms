@@ -4,6 +4,7 @@ from django.db import models
 from .element_types import element_types, INPUT
 from django.utils.dateparse import parse_datetime
 
+
 class Form(models.Model):
     """ Form """
     pass
@@ -48,6 +49,8 @@ class Input(Element):
     value = models.CharField(max_length=1024, blank=True, null=True)
     filters = ['icontains', 'startswith', 'endswith']
 
+    sub_form = models.ForeignKey(SubForm, related_name="inputs", on_delete=models.CASCADE)
+
 
 class DateTimeElement(Element):
     """Date time field """
@@ -55,17 +58,21 @@ class DateTimeElement(Element):
     value = models.DateTimeField(blank=True, null=True)
     filters = ['gt', 'lt']
 
+    sub_form = models.ForeignKey(SubForm, related_name="date_times", on_delete=models.CASCADE)
+
 
 class SelectElement(Element, models.Model):
     """Html select element with options """
 
     value = models.CharField(max_length=1024, blank=True, null=True)
-    filters = ['',] # empty filter stirng means exact match
+    filters = ['', ]  # empty filter string means exact match
+
+    sub_form = models.ForeignKey(SubForm, related_name="selects", on_delete=models.CASCADE)
 
 
 class Option(models.Model):
-        """ An option in the select element """
-        value = models.CharField(max_length=255)
-        display = models.CharField(max_length=255)
+    """ An option in the select element """
+    value = models.CharField(max_length=255)
+    display = models.CharField(max_length=255)
 
-        select_form = models.ForeignKey("SelectElement", related_name="options", on_delete=models.CASCADE)
+    select_form = models.ForeignKey("SelectElement", related_name="options", on_delete=models.CASCADE)
