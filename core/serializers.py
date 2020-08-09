@@ -4,6 +4,8 @@ from core.models import Input, Data, DateTimeElement, SelectElement, SubForm
 from core.sub_form_fields import get_related_fields
 from .element_types import INPUT, SELECT, DATE, DATETIME, RADIO, RANGE, CHECKBOX, TIME
 
+base_fields = ['pk', 'title', 'type', 'filters']
+
 
 class DataSerializer(serializers.ModelSerializer):
     class Meta:
@@ -14,19 +16,21 @@ class DataSerializer(serializers.ModelSerializer):
 class InputRetrieveSerializer(serializers.ModelSerializer):
     class Meta:
         model = Input
-        fields = ['pk', 'value']
+        fields = base_fields
 
 
 class SelectElementRetrieveSerializer(serializers.ModelSerializer):
+    data = DataSerializer(many=True, read_only=True)
+
     class Meta:
         model = SelectElement
-        fields = ['pk', 'value', 'data']
+        fields = base_fields + ['data', ]
 
 
 class DateTimeRetrieveSerializer(serializers.ModelSerializer):
     class Meta:
         model = DateTimeElement
-        fields = ['pk', 'value']
+        fields = base_fields
 
 
 # map of element types to their serializers
@@ -38,14 +42,14 @@ _serializers = {
 
 
 class SubFormRetrieveSerializer(serializers.ModelSerializer):
-    fields = serializers.SerializerMethodField()
+    elements = serializers.SerializerMethodField()
 
     class Meta:
         model = SubForm
-        fields = ['pk', 'title', 'description', 'fields']
+        fields = ['pk', 'title', 'description', 'elements']
 
-    def get_fields(self):
-        _fields = get_related_fields(self.instance)
+    def get_elements(self, instance):
+        _fields = get_related_fields(instance)
         _fields_data = []
 
         for field in _fields:
