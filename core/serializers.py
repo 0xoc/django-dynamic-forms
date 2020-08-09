@@ -1,30 +1,63 @@
 from rest_framework import serializers
 
-from core.models import Input, Data, DateTimeElement, SelectElement, SubForm
+from core.models import Input, Data, DateTimeElement, SelectElement, SubForm, Element
 from core.sub_form_fields import get_related_fields
 from .element_types import INPUT, SELECT, DATE, DATETIME, RADIO, RANGE, CHECKBOX, TIME
 
-base_fields = ['pk', 'title', 'type', 'filters', 'order']
+base_fields = ['pk', 'title', 'type', 'value', 'filters', 'order']
+abstract_element_fields = ['pk', 'title', 'type', 'order', 'sub_form']
+base_element_fields = abstract_element_fields + ['value', ]
+
+
+class ElementCreteSerializer(serializers.ModelSerializer):
+    """Abstract element serializer"""
+
+    class Meta:
+        model = Element
+        fields = abstract_element_fields
+        abstract = True
 
 
 class DataSerializer(serializers.ModelSerializer):
+    """Element Extra data CRUD serializer"""
+
     class Meta:
         model = Data
         fields = ['pk', 'value', 'display']
 
 
-class InputRetrieveSerializer(serializers.ModelSerializer):
+class InputRetrieveUpdateSerializer(serializers.ModelSerializer):
+    """simple input RUD serializer"""
+
     class Meta:
         model = Input
         fields = base_fields
 
 
-class SelectElementRetrieveSerializer(serializers.ModelSerializer):
-    data = DataSerializer(many=True, read_only=True)
+class InputCreateSerializer(serializers.ModelSerializer):
+    """simple input create serializer"""
+
+    class Meta:
+        model = Input
+        fields = base_element_fields
+
+
+class SelectElementRetrieveUpdateSerializer(serializers.ModelSerializer):
+    """Select element RUD serializer"""
+    data = DataSerializer(many=True)
 
     class Meta:
         model = SelectElement
         fields = base_fields + ['data', ]
+
+
+class SelectElementCreateSerializer(serializers.ModelSerializer):
+    """Select element create serializer"""
+    data = DataSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = SelectElement
+        fields = base_element_fields + ['data', ]
 
 
 class DateTimeRetrieveSerializer(serializers.ModelSerializer):
@@ -35,9 +68,9 @@ class DateTimeRetrieveSerializer(serializers.ModelSerializer):
 
 # map of element types to their serializers
 _serializers = {
-    INPUT: {'retrieve': InputRetrieveSerializer},
+    INPUT: {'retrieve': InputRetrieveUpdateSerializer},
     DATETIME: {'retrieve': DateTimeRetrieveSerializer},
-    SELECT: {'retrieve': SelectElementRetrieveSerializer}
+    SELECT: {'retrieve': SelectElementRetrieveUpdateSerializer}
 }
 
 
@@ -65,14 +98,3 @@ class SubFormRawCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = SubForm
         fields = ['pk', 'title', 'description']
-
-
-class SubFormCreateSerializer(serializers.ModelSerializer):
-    elements = serializers.JSONField()
-
-    class Meta:
-        model = SubForm
-        fields = ['pk', 'title', 'description', 'elements']
-
-    def create(self, validated_data):
-        print(validated_data.get('elements'))
