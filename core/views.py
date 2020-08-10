@@ -2,7 +2,8 @@ from rest_framework.generics import RetrieveAPIView, CreateAPIView
 from rest_framework.permissions import IsAuthenticated
 
 from .models import SubForm
-from .serializers import SubFormRetrieveSerializer, SubFormRawCreateSerializer, AddFieldToSubForm
+from core.serializers.create_serializers import SubFormRawCreateSerializer
+from .serializers.retreive_serializers import SubFormRetrieveSerializer
 
 
 class RetrieveSubFormView(RetrieveAPIView):
@@ -18,9 +19,3 @@ class CreateRawSubForm(CreateAPIView):
     """Create a new sub form with fields"""
     permission_classes = [IsAuthenticated, ]
     serializer_class = SubFormRawCreateSerializer
-
-
-class AddFieldToSubFormView(CreateAPIView):
-    """Add Field to sub form"""
-    permission_classes = [IsAuthenticated, ]
-    serializer_class = AddFieldToSubForm
