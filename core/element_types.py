@@ -34,3 +34,6 @@ element_types = ((INPUT, _("Input")),
                  (TIME, _("Time")),
                  (DATETIME, _("Datetime")),
                  (RANGE, _("Range")))
+
+
+element_types_list = [e[0] for e in element_types]

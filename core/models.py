@@ -1,5 +1,5 @@
 from django.db import models
-from .element_types import element_types, INPUT
+from .element_types import element_types, INPUT, DATETIME, SELECT
 
 
 class Form(models.Model):
@@ -42,7 +42,7 @@ class Element(models.Model):
 
     """
     title = models.CharField(max_length=255)
-    type = models.CharField(max_length=3, choices=element_types, default=INPUT)
+    type = "ABC"
 
     # display order of the field
     order = models.IntegerField(default=0)
@@ -56,6 +56,7 @@ class Element(models.Model):
 class Input(Element):
     """ Simple Text Input """
     value = models.CharField(max_length=1024, blank=True, null=True)
+    type = INPUT
     filters = ['icontains', 'startswith', 'endswith']
 
 
@@ -63,6 +64,7 @@ class DateTimeElement(Element):
     """Date time field """
 
     value = models.DateTimeField(blank=True, null=True)
+    type = DATETIME
     filters = ['gt', 'lt']
 
 
@@ -70,6 +72,7 @@ class SelectElement(Element):
     """Html select element with options"""
 
     value = models.CharField(max_length=1024, blank=True, null=True)
+    type = SELECT
     filters = ['', ]  # empty filter string means exact match
 
     data = models.ManyToManyField("Data")

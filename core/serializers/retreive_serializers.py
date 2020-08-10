@@ -30,10 +30,11 @@ class DateTimeRetrieveSerializer(serializers.ModelSerializer):
         fields = base_fields
 
 
-_serializers = {
-    INPUT: {'retrieve': InputRetrieveUpdateSerializer},
-    DATETIME: {'retrieve': DateTimeRetrieveSerializer},
-    SELECT: {'retrieve': SelectElementRetrieveUpdateSerializer}
+# map of element types to their retrieve serializer
+retrieve_serializers = {
+    INPUT: InputRetrieveUpdateSerializer,
+    DATETIME: DateTimeRetrieveSerializer,
+    SELECT: SelectElementRetrieveUpdateSerializer
 }
 
 
@@ -50,7 +51,7 @@ class SubFormRetrieveSerializer(serializers.ModelSerializer):
         _fields_data = []
 
         for field in _fields:
-            _Serializer = _serializers.get(field.type).get('retrieve')
+            _Serializer = retrieve_serializers.get(type(field).type)
             _field_data = _Serializer(instance=field).data
             _fields_data.append(_field_data)
 
