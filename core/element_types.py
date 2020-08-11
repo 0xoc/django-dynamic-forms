@@ -17,14 +17,14 @@ DATETIME
 RANGE
 """
 
-INPUT = "000"
-SELECT = "001"
-RADIO = "010"
-CHECKBOX = "011"
-DATE = "100"
-TIME = "101"
-DATETIME = "110"
-RANGE = "111"
+INPUT = "input"
+SELECT = "select"
+RADIO = "radio"
+CHECKBOX = "checkbox"
+DATE = "date"
+TIME = "time"
+DATETIME = "datetime"
+RANGE = "range"
 
 element_types = ((INPUT, _("Input")),
                  (SELECT, _("Select")),
