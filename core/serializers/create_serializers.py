@@ -1,19 +1,12 @@
+from abc import ABC
+
 from rest_framework import serializers
 
-from core.models import Input, SelectElement, SubForm, Element, DateTimeElement
+from core.models import Input, SelectElement, SubForm, Element, DateTimeElement, Data
 from core.serializers.common_serializers import DataSerializer
 from core.element_types import INPUT, DATETIME, SELECT
 from core.element_types import element_types
 from core.serializers.serializers_headers import abstract_element_fields, base_element_fields
-
-
-class ElementCreteSerializer(serializers.ModelSerializer):
-    """Abstract element serializer"""
-
-    class Meta:
-        model = Element
-        fields = abstract_element_fields
-        abstract = True
 
 
 class InputCreateSerializer(serializers.ModelSerializer):
@@ -24,7 +17,29 @@ class InputCreateSerializer(serializers.ModelSerializer):
         fields = base_element_fields
 
 
-class SelectElementCreateSerializer(serializers.ModelSerializer):
+class CreateElementWithData(serializers.ModelSerializer):
+    class Meta:
+        model = None
+
+    def create(self, validated_data):
+        _Model = self.Meta.model
+
+        data_data = validated_data.pop('data')
+
+        data_objects = [Data(**data_data_) for data_data_ in data_data]
+
+        for data_object in data_objects:
+            data_object.save()
+
+        _model = _Model(**validated_data)
+        _model.save()
+
+        _model.data.add(*data_objects)
+
+        return _model
+
+
+class SelectElementCreateSerializer(CreateElementWithData):
     """Select element create serializer"""
     data = DataSerializer(many=True)
 
