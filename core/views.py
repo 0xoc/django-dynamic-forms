@@ -20,19 +20,19 @@ class RetrieveSubFormView(RetrieveAPIView):
 
 class CreateRawSubForm(CreateAPIView):
     """Create a new sub form with fields"""
-    permission_classes = [IsAuthenticated, ]
+    # permission_classes = [IsAuthenticated, ]
     serializer_class = SubFormRawCreateSerializer
 
 
 class AddFieldToSubForm(CreateAPIView):
     """ Add a field to sub form """
-    permission_classes = [IsAuthenticated, ]
+    # permission_classes = [IsAuthenticated, ]
     serializer_class = FieldRawCreateSerializer
 
 
 class AddElementToField(CreateAPIView):
     """ Add a field to sub form """
-    permission_classes = [IsAuthenticated, ]
+    # permission_classes = [IsAuthenticated, ]
 
     def get_serializer_class(self):
         """Get serializer based on filed type"""
