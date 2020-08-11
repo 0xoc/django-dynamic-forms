@@ -2,7 +2,7 @@ from abc import ABC
 
 from rest_framework import serializers
 
-from core.models import Input, SelectElement, SubForm, Element, DateTimeElement, Data
+from core.models import Input, SelectElement, SubForm, Element, DateTimeElement, Data, Field
 from core.serializers.common_serializers import DataSerializer
 from core.element_types import INPUT, DATETIME, SELECT
 from core.element_types import element_types
@@ -72,3 +72,14 @@ class SubFormRawCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = SubForm
         fields = ['pk', 'title', 'description']
+
+
+class FieldRawCreateSerializer(serializers.ModelSerializer):
+    """
+    Create raw field, a raw field has a title and a form id
+    other filed elements
+    """
+
+    class Meta:
+        model = Field
+        fields = ['pk', 'title', 'sub_form']

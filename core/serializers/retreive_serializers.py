@@ -1,10 +1,10 @@
 from rest_framework import serializers
 
 from core.element_types import INPUT, DATETIME, SELECT
-from core.models import Input, SelectElement, DateTimeElement, SubForm
+from core.models import Input, SelectElement, DateTimeElement, SubForm, Field
 from core.serializers.common_serializers import DataSerializer
-from core.serializers.serializers_headers import base_fields
-from core.sub_form_fields import get_related_fields
+from core.serializers.serializers_headers import base_fields, base_field_fields
+from core.sub_form_fields import get_related_elements
 
 
 class InputRetrieveUpdateSerializer(serializers.ModelSerializer):
@@ -38,16 +38,17 @@ retrieve_serializers = {
 }
 
 
-class SubFormRetrieveSerializer(serializers.ModelSerializer):
+class FieldRetrieveSerializer(serializers.ModelSerializer):
+    """Retrieve a field with it's elements"""
     elements = serializers.SerializerMethodField()
 
     class Meta:
-        model = SubForm
-        fields = ['pk', 'title', 'description', 'elements']
+        model = Field
+        fields = base_field_fields
 
     @staticmethod
     def get_elements(instance):
-        _fields = get_related_fields(instance)
+        _fields = get_related_elements(instance)
         _fields_data = []
 
         for field in _fields:
@@ -56,3 +57,13 @@ class SubFormRetrieveSerializer(serializers.ModelSerializer):
             _fields_data.append(_field_data)
 
         return _fields_data
+
+
+class SubFormRetrieveSerializer(serializers.ModelSerializer):
+    """Retrieve Sub Form data with is's inputs and input elements"""
+    fields = FieldRetrieveSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = SubForm
+        fields = ['pk', 'title', 'description', 'fields']
+

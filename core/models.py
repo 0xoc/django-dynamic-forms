@@ -13,6 +13,7 @@ class SubForm(models.Model):
     """
     title = models.CharField(max_length=255, blank=True, null=True)
     description = models.CharField(max_length=1000, blank=True, null=True)
+    order = models.IntegerField(default=0)
 
 
 class Field(models.Model):
@@ -47,7 +48,7 @@ class Element(models.Model):
     # display order of the field
     order = models.IntegerField(default=0)
 
-    sub_form = models.ForeignKey(SubForm, related_name="fields_%(class)s", on_delete=models.CASCADE)
+    field = models.ForeignKey(Field, related_name="elements_%(class)s", on_delete=models.CASCADE)
 
     class Meta:
         abstract = True

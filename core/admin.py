@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import *
-from .sub_form_fields import get_related_fields
+from .sub_form_fields import get_related_elements
 from .element_types import SELECT
 
 admin.site.register(Form)

@@ -2,11 +2,12 @@ from rest_framework.exceptions import APIException, ValidationError, ParseError
 from rest_framework.generics import RetrieveAPIView, CreateAPIView
 from rest_framework.permissions import IsAuthenticated
 from django.utils.translation import gettext as _
-from core.serializers.create_serializers import SubFormRawCreateSerializer
+from core.serializers.create_serializers import SubFormRawCreateSerializer, FieldRawCreateSerializer
 from .serializers.retreive_serializers import SubFormRetrieveSerializer
 from .serializers.create_serializers import create_serializers
 from .models import SubForm
 from rest_framework import serializers
+
 
 class RetrieveSubFormView(RetrieveAPIView):
     """Retrieve basic sub form info with fields data"""
@@ -24,6 +25,12 @@ class CreateRawSubForm(CreateAPIView):
 
 
 class AddFieldToSubForm(CreateAPIView):
+    """ Add a field to sub form """
+    permission_classes = [IsAuthenticated, ]
+    serializer_class = FieldRawCreateSerializer
+
+
+class AddElementToField(CreateAPIView):
     """ Add a field to sub form """
     permission_classes = [IsAuthenticated, ]
 
