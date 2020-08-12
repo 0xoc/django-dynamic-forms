@@ -133,4 +133,4 @@ dmypy.json
 .idea
 
 # secrest
-generalForms/secrets.py
+secrets.py
