@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
-from core.element_types import INPUT, DATETIME, SELECT
-from core.models import Input, SelectElement, DateTimeElement, SubForm, Field
+from core.element_types import INPUT, DATETIME, SELECT, RADIO, CHECKBOX, DATE, TIME
+from core.models import Input, SelectElement, DateTimeElement, SubForm, Field, CheckboxElement, DateElement, TimeElement
 from core.serializers.common_serializers import DataSerializer
 from core.serializers.serializers_headers import base_fields, base_field_fields
 from core.sub_form_fields import get_related_elements
@@ -24,6 +24,42 @@ class SelectElementRetrieveUpdateSerializer(serializers.ModelSerializer):
         fields = base_fields + ['data', ]
 
 
+class RadioRetrieveUpdateSerializer(serializers.ModelSerializer):
+    """Radio RUD serializer"""
+    data = DataSerializer(many=True)
+
+    class Meta:
+        model = SelectElement
+        fields = base_fields + ['data', ]
+
+
+class CheckboxRetrieveUpdateSerializer(serializers.ModelSerializer):
+    """Checkbox RUD serializer"""
+    data = DataSerializer(many=True)
+
+    class Meta:
+        model = CheckboxElement
+        fields = base_fields + ['data', ]
+
+
+class DateRetrieveUpdateSerializer(serializers.ModelSerializer):
+    """Checkbox RUD serializer"""
+    data = DataSerializer(many=True)
+
+    class Meta:
+        model = DateElement
+        fields = base_fields
+
+
+class TimeRetrieveUpdateSerializer(serializers.ModelSerializer):
+    """Checkbox RUD serializer"""
+    data = DataSerializer(many=True)
+
+    class Meta:
+        model = TimeElement
+        fields = base_fields
+
+
 class DateTimeRetrieveSerializer(serializers.ModelSerializer):
     class Meta:
         model = DateTimeElement
@@ -34,7 +70,11 @@ class DateTimeRetrieveSerializer(serializers.ModelSerializer):
 retrieve_serializers = {
     INPUT: InputRetrieveUpdateSerializer,
     DATETIME: DateTimeRetrieveSerializer,
-    SELECT: SelectElementRetrieveUpdateSerializer
+    SELECT: SelectElementRetrieveUpdateSerializer,
+    RADIO: RadioRetrieveUpdateSerializer,
+    CHECKBOX: CheckboxRetrieveUpdateSerializer,
+    DATE: DateRetrieveUpdateSerializer,
+    TIME: TimeRetrieveUpdateSerializer,
 }
 
 
@@ -66,4 +106,3 @@ class SubFormRetrieveSerializer(serializers.ModelSerializer):
     class Meta:
         model = SubForm
         fields = ['pk', 'title', 'description', 'fields']
-
