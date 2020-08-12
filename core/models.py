@@ -106,8 +106,6 @@ class DateElement(Element):
     type = DATE
     filters = ['', ]  # empty filter string means exact match
 
-    data = models.ManyToManyField("Data")
-
 
 class TimeElement(Element):
     """Html TimeField element with options"""
@@ -115,8 +113,6 @@ class TimeElement(Element):
     value = models.TimeField(blank=True, null=True)
     type = DATE
     filters = ['', ]  # empty filter string means exact match
-
-    data = models.ManyToManyField("Data")
 
 
 class Data(models.Model):
