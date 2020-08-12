@@ -44,7 +44,6 @@ class CheckboxRetrieveUpdateSerializer(serializers.ModelSerializer):
 
 class DateRetrieveUpdateSerializer(serializers.ModelSerializer):
     """Checkbox RUD serializer"""
-    data = DataSerializer(many=True)
 
     class Meta:
         model = DateElement
@@ -53,7 +52,6 @@ class DateRetrieveUpdateSerializer(serializers.ModelSerializer):
 
 class TimeRetrieveUpdateSerializer(serializers.ModelSerializer):
     """Checkbox RUD serializer"""
-    data = DataSerializer(many=True)
 
     class Meta:
         model = TimeElement
@@ -105,4 +103,4 @@ class SubFormRetrieveSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SubForm
-        fields = ['pk', 'title', 'description', 'fields']
+        fields = ['pk', 'title', 'description', 'order', 'fields', ]
