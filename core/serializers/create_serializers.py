@@ -67,22 +67,20 @@ class CheckboxCreateSerializer(CreateElementWithData):
         fields = base_element_fields + ['data', ]
 
 
-class DateCreateSerializer(CreateElementWithData):
+class DateCreateSerializer(serializers.ModelSerializer):
     """Date create serializer"""
-    data = DataSerializer(many=True)
 
     class Meta:
         model = DateElement
-        fields = base_element_fields + ['data', ]
+        fields = base_element_fields
 
 
-class TimeCreateSerializer(CreateElementWithData):
+class TimeCreateSerializer(serializers.ModelSerializer):
     """time create serializer"""
-    data = DataSerializer(many=True)
 
     class Meta:
         model = TimeElement
-        fields = base_element_fields + ['data', ]
+        fields = base_element_fields
 
 
 class DataTimeCreateSerializer(serializers.ModelSerializer):
