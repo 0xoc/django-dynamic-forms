@@ -2,9 +2,10 @@ from abc import ABC
 
 from rest_framework import serializers
 
-from core.models import Input, SelectElement, SubForm, Element, DateTimeElement, Data, Field
+from core.models import Input, SelectElement, SubForm, Element, DateTimeElement, Data, Field, RadioElement, \
+    CheckboxElement, DateElement, TimeElement
 from core.serializers.common_serializers import DataSerializer
-from core.element_types import INPUT, DATETIME, SELECT
+from core.element_types import INPUT, DATETIME, SELECT, RADIO, CHECKBOX, DATE, TIME
 from core.element_types import element_types
 from core.serializers.serializers_headers import abstract_element_fields, base_element_fields
 
@@ -48,6 +49,42 @@ class SelectElementCreateSerializer(CreateElementWithData):
         fields = base_element_fields + ['data', ]
 
 
+class RadioCreateSerializer(CreateElementWithData):
+    """Radio create serializer"""
+    data = DataSerializer(many=True)
+
+    class Meta:
+        model = RadioElement
+        fields = base_element_fields + ['data', ]
+
+
+class CheckboxCreateSerializer(CreateElementWithData):
+    """Checkbox create serializer"""
+    data = DataSerializer(many=True)
+
+    class Meta:
+        model = CheckboxElement
+        fields = base_element_fields + ['data', ]
+
+
+class DateCreateSerializer(CreateElementWithData):
+    """Date create serializer"""
+    data = DataSerializer(many=True)
+
+    class Meta:
+        model = DateElement
+        fields = base_element_fields + ['data', ]
+
+
+class TimeCreateSerializer(CreateElementWithData):
+    """time create serializer"""
+    data = DataSerializer(many=True)
+
+    class Meta:
+        model = TimeElement
+        fields = base_element_fields + ['data', ]
+
+
 class DataTimeCreateSerializer(serializers.ModelSerializer):
     """simple input create serializer"""
 
@@ -60,7 +97,11 @@ class DataTimeCreateSerializer(serializers.ModelSerializer):
 create_serializers = {
     INPUT: InputCreateSerializer,
     DATETIME: DataTimeCreateSerializer,
-    SELECT: SelectElementCreateSerializer
+    SELECT: SelectElementCreateSerializer,
+    RADIO: RadioCreateSerializer,
+    CHECKBOX: CheckboxCreateSerializer,
+    DATE: DateCreateSerializer,
+    TIME: TimeCreateSerializer,
 }
 
 

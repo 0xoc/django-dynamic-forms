@@ -1,5 +1,5 @@
 from django.db import models
-from .element_types import element_types, INPUT, DATETIME, SELECT
+from .element_types import element_types, INPUT, DATETIME, SELECT, RADIO, CHECKBOX, DATE
 
 
 class Form(models.Model):
@@ -74,6 +74,46 @@ class SelectElement(Element):
 
     value = models.CharField(max_length=1024, blank=True, null=True)
     type = SELECT
+    filters = ['', ]  # empty filter string means exact match
+
+    data = models.ManyToManyField("Data")
+
+
+class RadioElement(Element):
+    """Html radio element with options"""
+
+    value = models.CharField(max_length=1024, blank=True, null=True)
+    type = RADIO
+    filters = ['', ]  # empty filter string means exact match
+
+    data = models.ManyToManyField("Data")
+
+
+class CheckboxElement(Element):
+    """Html checkbox element with options"""
+
+    value = models.CharField(max_length=1024, blank=True, null=True)
+    type = CHECKBOX
+    filters = ['', ]  # empty filter string means exact match
+
+    data = models.ManyToManyField("Data")
+
+
+class DateElement(Element):
+    """Html date element with options"""
+
+    value = models.DateField(blank=True, null=True)
+    type = DATE
+    filters = ['', ]  # empty filter string means exact match
+
+    data = models.ManyToManyField("Data")
+
+
+class TimeElement(Element):
+    """Html TimeField element with options"""
+
+    value = models.TimeField(blank=True, null=True)
+    type = DATE
     filters = ['', ]  # empty filter string means exact match
 
     data = models.ManyToManyField("Data")
