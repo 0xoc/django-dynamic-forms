@@ -1,5 +1,18 @@
 from django.db import models
-from .element_types import element_types, INPUT, DATETIME, SELECT, RADIO, CHECKBOX, DATE
+from rest_framework.authtoken.models import Token
+
+from .element_types import INPUT, DATETIME, SELECT, RADIO, CHECKBOX, DATE
+from django.contrib.auth.models import User
+
+
+class UserProfile(models.Model):
+    """User profile"""
+    user = models.ForeignKey(User, related_name="user_profile", on_delete=models.CASCADE)
+
+    @property
+    def token(self) -> str:
+        token, created = Token.objects.get_or_create(user=self.user)
+        return str(token.key)
 
 
 class Form(models.Model):

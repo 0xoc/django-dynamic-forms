@@ -1,13 +1,10 @@
-from abc import ABC
-
 from rest_framework import serializers
 
-from core.models import Input, SelectElement, SubForm, Element, DateTimeElement, Data, Field, RadioElement, \
+from core.models import Input, SelectElement, SubForm, DateTimeElement, Data, Field, RadioElement, \
     CheckboxElement, DateElement, TimeElement
-from core.serializers.common_serializers import DataSerializer
+from core.serializers.FormSerializers.common_serializers import DataSerializer
 from core.element_types import INPUT, DATETIME, SELECT, RADIO, CHECKBOX, DATE, TIME
-from core.element_types import element_types
-from core.serializers.serializers_headers import abstract_element_fields, base_element_fields
+from core.serializers.FormSerializers.serializers_headers import base_element_fields
 
 
 class InputCreateSerializer(serializers.ModelSerializer):
