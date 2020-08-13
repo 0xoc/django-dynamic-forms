@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'core.apps.CoreConfig',
     'rest_framework',
     'corsheaders',
-    'rest_framework.authtoken'
+    'rest_framework.authtoken',
+    'django_extensions',
 
 ]
 
