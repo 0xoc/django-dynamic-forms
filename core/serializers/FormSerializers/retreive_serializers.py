@@ -1,7 +1,8 @@
 from rest_framework import serializers
 
 from core.element_types import INPUT, DATETIME, SELECT, RADIO, CHECKBOX, DATE, TIME
-from core.models import Input, SelectElement, DateTimeElement, SubForm, Field, CheckboxElement, DateElement, TimeElement
+from core.models import Input, SelectElement, DateTimeElement, SubForm, Field, CheckboxElement, DateElement, \
+    TimeElement, Form
 from core.serializers.FormSerializers.common_serializers import DataSerializer
 from core.serializers.FormSerializers.serializers_headers import base_fields, base_field_fields
 from core.sub_form_fields import get_related_elements
@@ -105,3 +106,11 @@ class SubFormRetrieveSerializer(serializers.ModelSerializer):
         model = SubForm
         fields = ['pk', 'title', 'description', 'order', 'fields', 'order']
 
+
+class FormRetrieveSerializer(serializers.ModelSerializer):
+    """Retrieve form info with filler info and detailed sub_form info"""
+    sub_forms = SubFormRetrieveSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Form
+        fields = ['pk', 'base_template', "sub_forms"]

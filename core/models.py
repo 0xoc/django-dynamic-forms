@@ -1,8 +1,11 @@
-from django.db import models
+from django.db import models, transaction
 from rest_framework.authtoken.models import Token
 
 from .element_types import INPUT, DATETIME, SELECT, RADIO, CHECKBOX, DATE
 from django.contrib.auth.models import User
+
+from .helpers import duplicate
+from .sub_form_fields import get_related_elements
 
 
 class UserProfile(models.Model):
@@ -18,7 +21,39 @@ class UserProfile(models.Model):
 class Form(models.Model):
     filler = models.ForeignKey(UserProfile, related_name="forms",
                                on_delete=models.SET_NULL, blank=True, null=True)
+    base_template = models.ForeignKey("Form", related_name="forms", on_delete=models.CASCADE, blank=True, null=True)
 
+    def create_filling_form(self):
+        with transaction.atomic():
+
+            # duplicate form info
+            self.base_template = Form.objects.get(pk=self.pk)
+            self.pk = None
+
+            self.save()
+
+            # duplicate sub_forms
+            for sub_form in self.base_template.sub_forms.all():
+                _fields = sub_form.fields.all()
+
+                sub_form.pk = None
+                sub_form.form = self
+                sub_form.save()
+
+                # duplicate sub form fields
+                for field in _fields:
+                    _elements = get_related_elements(field)
+
+                    field.pk = None
+                    field.sub_form = sub_form
+                    field.save()
+
+                    # duplicate elements
+                    for element in _elements:
+                        element.pk = None
+                        element.field = field
+                        element.save()
+        return self
 
 class SubForm(models.Model):
     """
@@ -27,6 +62,7 @@ class SubForm(models.Model):
     title = models.CharField(max_length=255, blank=True, null=True)
     description = models.CharField(max_length=1000, blank=True, null=True)
     order = models.IntegerField(default=0)
+    form = models.ForeignKey(Form, related_name="sub_forms", on_delete=models.CASCADE)
 
 
 class Field(models.Model):

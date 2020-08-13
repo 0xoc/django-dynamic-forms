@@ -1,16 +1,14 @@
-import json
-
-from rest_framework.generics import RetrieveAPIView, CreateAPIView
+from rest_framework.generics import RetrieveAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from core.element_types import element_types
-from core.permissions import IsLoggedIn
+from core.permissions import IsLoggedIn, IsSuperuser
 from core.serializers.FormSerializers.create_serializers import SubFormRawCreateSerializer, FieldRawCreateSerializer
-from core.serializers.FormSerializers.retreive_serializers import SubFormRetrieveSerializer
+from core.serializers.FormSerializers.retreive_serializers import SubFormRetrieveSerializer, FormRetrieveSerializer
 from core.serializers.FormSerializers.create_serializers import create_serializers
-from core.models import SubForm
+from core.models import SubForm, Form
 
 
 class RetrieveSubFormView(RetrieveAPIView):
@@ -20,6 +18,15 @@ class RetrieveSubFormView(RetrieveAPIView):
 
     lookup_field = 'pk'
     lookup_url_kwarg = 'sub_form_id'
+
+class FormRetrieveView(RetrieveUpdateDestroyAPIView):
+    """RUD form"""
+    permission_classes = [IsLoggedIn, IsSuperuser]
+    serializer_class = FormRetrieveSerializer
+    queryset = Form.objects.all()
+
+    lookup_field = 'pk'
+    lookup_url_kwarg = 'form_id'
 
 
 class CreateRawSubForm(CreateAPIView):
