@@ -1,6 +1,11 @@
+import json
+
 from rest_framework.generics import RetrieveAPIView, CreateAPIView
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
+from core.element_types import element_types
 from core.permissions import IsLoggedIn
 from core.serializers.FormSerializers.create_serializers import SubFormRawCreateSerializer, FieldRawCreateSerializer
 from core.serializers.FormSerializers.retreive_serializers import SubFormRetrieveSerializer
@@ -38,3 +43,10 @@ class AddElementToField(CreateAPIView):
         _element_type = self.kwargs.get('element_type')
 
         return create_serializers.get(_element_type, None)
+
+
+class ElementTypesList(APIView):
+
+    def get(self, request, *args, **kwargs):
+
+        return Response(element_types)
