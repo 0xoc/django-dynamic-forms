@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 
 class UserProfile(models.Model):
     """User profile"""
-    user = models.ForeignKey(User, related_name="user_profile", on_delete=models.CASCADE)
+    user = models.OneToOneField(User, related_name="user_profile", on_delete=models.CASCADE)
 
     @property
     def token(self) -> str:

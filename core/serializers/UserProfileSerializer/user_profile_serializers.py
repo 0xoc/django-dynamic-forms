@@ -36,3 +36,17 @@ class UserProfileCreateSerializer(serializers.ModelSerializer):
         user_profile.save()
 
         return user_profile
+
+    def update(self, instance, validated_data):
+        user_updates = validated_data.pop('user')
+
+        # update user
+        User.objects.filter(pk=instance.user.pk).update(**user_updates)
+
+        # update user
+        UserProfile.objects.filter(pk=instance.pk).update(**validated_data)
+
+        instance.refresh_from_db()
+
+        return instance
+
