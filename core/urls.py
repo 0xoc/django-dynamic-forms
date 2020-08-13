@@ -28,6 +28,8 @@ urlpatterns = [
 
     # field/element endpoints
     path('add-field/', AddFieldToSubForm.as_view()),
+    path('field/<int:field_id>/', AddFieldToSubForm.as_view()),
+
     path('add-element/<element_type>/', AddElementToField.as_view()),
     path('element/<element_type>/<int:element_id>/update-retrieve/', UpdateElement.as_view()),
     path('element-types/list/', ElementTypesList.as_view())

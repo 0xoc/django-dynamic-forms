@@ -20,6 +20,8 @@ class UserProfile(models.Model):
 class Form(models.Model):
     filler = models.ForeignKey(UserProfile, related_name="forms",
                                on_delete=models.SET_NULL, blank=True, null=True)
+    creator = models.ForeignKey(UserProfile, related_name="templates",
+                                on_delete=models.CASCADE)
     base_template = models.ForeignKey("Form", related_name="forms", on_delete=models.CASCADE, blank=True, null=True)
     title = models.CharField(max_length=255)
 

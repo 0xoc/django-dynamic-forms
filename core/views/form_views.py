@@ -62,6 +62,9 @@ class CreateTemplateView(CreateAPIView):
     permission_classes = [IsLoggedIn, IsSuperuser]
     serializer_class = TemplateRawCreateSerializer
 
+    def perform_create(self, serializer):
+        serializer.save(creator=self.request.user.user_profile)
+
 class ListTemplatesView(ListAPIView):
     """List All Template Forms"""
     permission_classes = [IsLoggedIn, ]
