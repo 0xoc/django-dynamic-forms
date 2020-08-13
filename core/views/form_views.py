@@ -1,4 +1,5 @@
-from rest_framework.generics import RetrieveAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import RetrieveAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView, get_object_or_404
+from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -19,14 +20,38 @@ class RetrieveSubFormView(RetrieveAPIView):
     lookup_field = 'pk'
     lookup_url_kwarg = 'sub_form_id'
 
-class FormRetrieveView(RetrieveUpdateDestroyAPIView):
-    """RUD form"""
+
+class TemplateRetrieveView(RetrieveUpdateDestroyAPIView):
+    """RUD template"""
     permission_classes = [IsLoggedIn, IsSuperuser]
     serializer_class = FormRetrieveSerializer
     queryset = Form.objects.all()
 
     lookup_field = 'pk'
-    lookup_url_kwarg = 'form_id'
+    lookup_url_kwarg = 'template_id'
+
+
+class CreateFormFromTemplate(CreateModelMixin, APIView):
+    """Create a new form from the given template form,
+    and set the filler to the currently logged in user"""
+    permission_classes = [IsLoggedIn, ]
+
+    def create(self, request, *args, **kwargs):
+        # get template form
+        template = get_object_or_404(Form, pk=kwargs.get('template_id'))
+        user_profile = request.user.user_profile
+
+        # create a new form and set filler
+        form = template.create_filling_form()
+        form.filler = user_profile
+        form.save()
+
+        form_data = FormRetrieveSerializer(instance=form).data
+
+        return Response(form_data)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
 
 class CreateRawSubForm(CreateAPIView):
@@ -55,5 +80,4 @@ class AddElementToField(CreateAPIView):
 class ElementTypesList(APIView):
 
     def get(self, request, *args, **kwargs):
-
         return Response(element_types)

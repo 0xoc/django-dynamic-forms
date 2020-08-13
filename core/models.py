@@ -4,7 +4,6 @@ from rest_framework.authtoken.models import Token
 from .element_types import INPUT, DATETIME, SELECT, RADIO, CHECKBOX, DATE
 from django.contrib.auth.models import User
 
-from .helpers import duplicate
 from .sub_form_fields import get_related_elements
 
 
@@ -27,7 +26,12 @@ class Form(models.Model):
         with transaction.atomic():
 
             # duplicate form info
-            self.base_template = Form.objects.get(pk=self.pk)
+            if not self.base_template:
+                _base_template = Form.objects.get(pk=self.pk)
+            else:
+                _base_template = self.base_template
+
+            self.base_template = _base_template
             self.pk = None
 
             self.save()

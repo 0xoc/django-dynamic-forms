@@ -1,7 +1,7 @@
 from django.urls import path
 
 from core.views.form_views import RetrieveSubFormView, CreateRawSubForm, AddFieldToSubForm, AddElementToField, \
-    ElementTypesList, FormRetrieveView
+    ElementTypesList, TemplateRetrieveView, CreateFormFromTemplate
 from core.views.user_profile_views import CreateUserProfileView, MyUserProfileInfo, UserProfileInfo
 
 urlpatterns = [
@@ -11,7 +11,8 @@ urlpatterns = [
     path('user-profile/<int:user_profile_id>/retrieve-update-delete/', UserProfileInfo.as_view()),
 
     # form endpoints
-    path('form/<int:form_id>/', FormRetrieveView.as_view()),
+    path('template/<int:template_id>/', TemplateRetrieveView.as_view()),
+    path('create-form-from-template/<int:template_id>/', CreateFormFromTemplate.as_view()),
 
     # sub-form endpoints
     path('sub-form/<int:sub_form_id>/', RetrieveSubFormView.as_view()),
