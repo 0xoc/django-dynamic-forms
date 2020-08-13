@@ -1,9 +1,11 @@
 from rest_framework.generics import RetrieveAPIView, CreateAPIView
 from rest_framework.permissions import IsAuthenticated
+
+from core.permissions import IsLoggedIn
 from core.serializers.FormSerializers.create_serializers import SubFormRawCreateSerializer, FieldRawCreateSerializer
 from core.serializers.FormSerializers.retreive_serializers import SubFormRetrieveSerializer
 from core.serializers.FormSerializers.create_serializers import create_serializers
-from .models import SubForm
+from core.models import SubForm
 
 
 class RetrieveSubFormView(RetrieveAPIView):
@@ -17,7 +19,7 @@ class RetrieveSubFormView(RetrieveAPIView):
 
 class CreateRawSubForm(CreateAPIView):
     """Create a new sub form with fields"""
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = [IsLoggedIn, ]
     serializer_class = SubFormRawCreateSerializer
 
 
