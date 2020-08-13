@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from core.models import Input, SelectElement, SubForm, DateTimeElement, Data, Field, RadioElement, \
-    CheckboxElement, DateElement, TimeElement
+    CheckboxElement, DateElement, TimeElement, Form
 from core.serializers.FormSerializers.common_serializers import DataSerializer
 from core.element_types import INPUT, DATETIME, SELECT, RADIO, CHECKBOX, DATE, TIME
 from core.serializers.FormSerializers.serializers_headers import base_element_fields
@@ -100,6 +100,14 @@ create_serializers = {
 }
 
 
+class TemplateRawCreateSerializer(serializers.ModelSerializer):
+    """Create raw form as a template"""
+
+    class Meta:
+        model = Form
+        fields = ['pk', 'title']
+
+
 class SubFormRawCreateSerializer(serializers.ModelSerializer):
     """Create a raw sub form,
     a raw sub form is a sub from without any fields,
@@ -107,7 +115,7 @@ class SubFormRawCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SubForm
-        fields = ['pk', 'title', 'description', 'order']
+        fields = ['pk', 'title', 'description', 'order', 'form']
 
 
 class FieldRawCreateSerializer(serializers.ModelSerializer):

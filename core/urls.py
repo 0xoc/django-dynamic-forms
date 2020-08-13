@@ -1,7 +1,8 @@
 from django.urls import path
 
+from core.serializers.FormSerializers.create_serializers import TemplateRawCreateSerializer
 from core.views.form_views import RetrieveSubFormView, CreateRawSubForm, AddFieldToSubForm, AddElementToField, \
-    ElementTypesList, TemplateRetrieveView, CreateFormFromTemplate
+    ElementTypesList, TemplateRetrieveView, CreateFormFromTemplate, CreateTemplateView
 from core.views.user_profile_views import CreateUserProfileView, MyUserProfileInfo, UserProfileInfo
 
 urlpatterns = [
@@ -11,7 +12,10 @@ urlpatterns = [
     path('user-profile/<int:user_profile_id>/retrieve-update-delete/', UserProfileInfo.as_view()),
 
     # form endpoints
+    path('template/create/', CreateTemplateView.as_view()),
     path('template/<int:template_id>/', TemplateRetrieveView.as_view()),
+    path('form/<int:template_id>/', TemplateRetrieveView.as_view()),    # redundant
+
     path('create-form-from-template/<int:template_id>/', CreateFormFromTemplate.as_view()),
 
     # sub-form endpoints

@@ -6,7 +6,8 @@ from rest_framework.views import APIView
 
 from core.element_types import element_types
 from core.permissions import IsLoggedIn, IsSuperuser
-from core.serializers.FormSerializers.create_serializers import SubFormRawCreateSerializer, FieldRawCreateSerializer
+from core.serializers.FormSerializers.create_serializers import SubFormRawCreateSerializer, FieldRawCreateSerializer, \
+    TemplateRawCreateSerializer
 from core.serializers.FormSerializers.retreive_serializers import SubFormRetrieveSerializer, FormRetrieveSerializer
 from core.serializers.FormSerializers.create_serializers import create_serializers
 from core.models import SubForm, Form
@@ -53,6 +54,12 @@ class CreateFormFromTemplate(CreateModelMixin, APIView):
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
+
+class CreateTemplateView(CreateAPIView):
+    """Create Raw Form As Template"""
+
+    permission_classes = [IsLoggedIn, IsSuperuser]
+    serializer_class = TemplateRawCreateSerializer
 
 class CreateRawSubForm(CreateAPIView):
     """Create a new sub form with fields"""

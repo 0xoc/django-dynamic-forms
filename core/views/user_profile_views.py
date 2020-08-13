@@ -1,5 +1,6 @@
 from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView
 
+from core.models import UserProfile
 from core.permissions import IsSuperuser, IsLoggedIn
 from core.serializers.UserProfileSerializer.user_profile_serializers import UserProfileCreateSerializer
 
@@ -26,6 +27,7 @@ class UserProfileInfo(RetrieveUpdateDestroyAPIView):
     """RUD any user"""
     permission_classes = [IsLoggedIn, IsSuperuser]
     serializer_class = UserProfileCreateSerializer
+    queryset = UserProfile.objects.all()
 
     lookup_url_kwarg = 'user_profile_id'
     lookup_field = 'pk'
