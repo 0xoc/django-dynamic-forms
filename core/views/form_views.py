@@ -1,4 +1,5 @@
-from rest_framework.generics import RetrieveAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView, get_object_or_404
+from rest_framework.generics import RetrieveAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView, get_object_or_404, \
+    ListAPIView
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -60,6 +61,14 @@ class CreateTemplateView(CreateAPIView):
 
     permission_classes = [IsLoggedIn, IsSuperuser]
     serializer_class = TemplateRawCreateSerializer
+
+class ListTemplatesView(ListAPIView):
+    """List All Template Forms"""
+    permission_classes = [IsLoggedIn, ]
+    serializer_class = FormRetrieveSerializer
+
+    def get_queryset(self):
+        return Form.objects.filter(base_template=None)
 
 class CreateRawSubForm(CreateAPIView):
     """Create a new sub form with fields"""
