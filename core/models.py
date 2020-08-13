@@ -1,7 +1,7 @@
 from django.db import models, transaction
 from rest_framework.authtoken.models import Token
 
-from .element_types import INPUT, DATETIME, SELECT, RADIO, CHECKBOX, DATE
+from .element_types import INPUT, DATETIME, SELECT, RADIO, CHECKBOX, DATE, TIME
 from django.contrib.auth.models import User
 
 from .sub_form_fields import get_related_elements
@@ -166,7 +166,7 @@ class TimeElement(Element):
     """Html TimeField element with options"""
 
     value = models.TimeField(blank=True, null=True)
-    type = DATE
+    type = TIME
     filters = ['', ]  # empty filter string means exact match
 
 
@@ -174,3 +174,14 @@ class Data(models.Model):
     """ Extra data used on select, radio, checkbox elements"""
     value = models.CharField(max_length=255)
     display = models.CharField(max_length=255)
+
+
+elements = {
+    INPUT: Input,
+    DATE: DateElement,
+    TIME: TimeElement,
+    DATETIME: DateTimeElement,
+    RADIO: RadioElement,
+    CHECKBOX: CheckboxElement,
+    SELECT: SelectElement
+}

@@ -1,9 +1,7 @@
 from django.urls import path
-
-from core.serializers.FormSerializers.create_serializers import TemplateRawCreateSerializer
 from core.views.form_views import RetrieveSubFormView, CreateRawSubForm, AddFieldToSubForm, AddElementToField, \
     ElementTypesList, TemplateRetrieveView, CreateFormFromTemplate, CreateTemplateView, ListTemplatesView, FormsIFilled, \
-    FormsOfTemplate
+    FormsOfTemplate, UpdateElement
 from core.views.user_profile_views import CreateUserProfileView, MyUserProfileInfo, UserProfileInfo, UserProfileList
 
 urlpatterns = [
@@ -20,7 +18,7 @@ urlpatterns = [
     path('create-form-from-template/<int:template_id>/', CreateFormFromTemplate.as_view()),
     path('template/list/', ListTemplatesView.as_view()),
 
-    # lists
+    # form lists
     path('forms-of-template/<int:template_id>/', FormsOfTemplate.as_view()),
     path('forms-I-filled/list/', FormsIFilled.as_view()),
 
@@ -31,6 +29,7 @@ urlpatterns = [
     # field/element endpoints
     path('add-field/', AddFieldToSubForm.as_view()),
     path('add-element/<element_type>/', AddElementToField.as_view()),
+    path('element/<element_type>/<int:element_id>/update-retrieve/', UpdateElement.as_view()),
     path('element-types/list/', ElementTypesList.as_view())
 
 ]

@@ -1,5 +1,5 @@
 from rest_framework.generics import RetrieveAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView, get_object_or_404, \
-    ListAPIView
+    ListAPIView, RetrieveUpdateAPIView
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -11,7 +11,7 @@ from core.serializers.FormSerializers.create_serializers import SubFormRawCreate
     TemplateRawCreateSerializer
 from core.serializers.FormSerializers.retreive_serializers import SubFormRetrieveSerializer, FormRetrieveSerializer
 from core.serializers.FormSerializers.create_serializers import create_serializers
-from core.models import SubForm, Form
+from core.models import SubForm, Form, elements
 
 
 class RetrieveSubFormView(RetrieveAPIView):
@@ -102,7 +102,7 @@ class AddFieldToSubForm(CreateAPIView):
 
 class AddElementToField(CreateAPIView):
     """ Add a field to sub form """
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = [IsLoggedIn, ]
 
     def get_serializer_class(self):
         """Get serializer based on filed type"""
@@ -111,7 +111,22 @@ class AddElementToField(CreateAPIView):
         return create_serializers.get(_element_type, None)
 
 
+class UpdateElement(RetrieveUpdateDestroyAPIView):
+    """ Add a field to sub form """
+    permission_classes = [IsLoggedIn, ]
+
+    def get_serializer_class(self):
+        """Get serializer based on filed type"""
+        _element_type = self.kwargs.get('element_type')
+
+        return create_serializers.get(_element_type, None)
+
+    def get_object(self):
+        return get_object_or_404(elements.get(self.kwargs.get('element_type')),
+                                 pk=self.kwargs.get('element_id'))
+
 class ElementTypesList(APIView):
 
-    def get(self, request, *args, **kwargs):
+    @staticmethod
+    def get(request, *args, **kwargs):
         return Response(element_types)
