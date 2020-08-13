@@ -134,3 +134,6 @@ dmypy.json
 
 # secrest
 secrets.py
+
+# static files
+static
