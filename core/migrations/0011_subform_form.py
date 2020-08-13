@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='subform',
             name='form',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, related_name='sub_forms', to='core.form'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='sub_forms', to='core.form'),
             preserve_default=False,
         ),
     ]
