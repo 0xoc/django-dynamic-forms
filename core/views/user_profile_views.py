@@ -1,4 +1,4 @@
-from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 
 from core.models import UserProfile
 from core.permissions import IsSuperuser, IsLoggedIn
@@ -31,3 +31,11 @@ class UserProfileInfo(RetrieveUpdateDestroyAPIView):
 
     lookup_url_kwarg = 'user_profile_id'
     lookup_field = 'pk'
+
+
+class UserProfileList(ListAPIView):
+    """List of all users"""
+    permission_classes = [IsLoggedIn, IsSuperuser]
+
+    serializer_class = UserProfileCreateSerializer
+    queryset = UserProfile.objects.all()

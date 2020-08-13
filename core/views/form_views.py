@@ -70,6 +70,24 @@ class ListTemplatesView(ListAPIView):
     def get_queryset(self):
         return Form.objects.filter(base_template=None)
 
+
+class FormsOfTemplate(ListAPIView):
+    """List All Forms from the given template"""
+    permission_classes = [IsLoggedIn, ]
+    serializer_class = FormRetrieveSerializer
+
+    def get_queryset(self):
+        return Form.objects.filter(base_template__pk=self.kwargs.get('template_id'))
+
+
+class FormsIFilled(ListAPIView):
+    """List All Forms that the currently logged in user filled"""
+    permission_classes = [IsLoggedIn, ]
+    serializer_class = FormRetrieveSerializer
+
+    def get_queryset(self):
+        return Form.objects.filter(filler=self.request.user.user_profile)
+
 class CreateRawSubForm(CreateAPIView):
     """Create a new sub form with fields"""
     permission_classes = [IsLoggedIn, ]
