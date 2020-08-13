@@ -107,7 +107,7 @@ class SubFormRawCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SubForm
-        fields = ['pk', 'title', 'description']
+        fields = ['pk', 'title', 'description', 'order']
 
 
 class FieldRawCreateSerializer(serializers.ModelSerializer):
@@ -118,4 +118,4 @@ class FieldRawCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Field
-        fields = ['pk', 'title', 'sub_form']
+        fields = ['pk', 'title', 'sub_form', 'order']

@@ -103,5 +103,5 @@ class SubFormRetrieveSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SubForm
-        fields = ['pk', 'title', 'description', 'order', 'fields', ]
+        fields = ['pk', 'title', 'description', 'order', 'fields', 'order']
 

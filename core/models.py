@@ -16,8 +16,8 @@ class UserProfile(models.Model):
 
 
 class Form(models.Model):
-    """ Form """
-    pass
+    filler = models.ForeignKey(UserProfile, related_name="forms",
+                               on_delete=models.SET_NULL, blank=True, null=True)
 
 
 class SubForm(models.Model):
@@ -35,6 +35,7 @@ class Field(models.Model):
     """
     sub_form = models.ForeignKey(SubForm, related_name="fields", on_delete=models.CASCADE)
     title = models.CharField(max_length=255, blank=True, null=True)
+    order = models.IntegerField(default=0)
 
 
 class Element(models.Model):
