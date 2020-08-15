@@ -115,7 +115,7 @@ class SubFormRawCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SubForm
-        fields = ['pk', 'title', 'description', 'order', 'form']
+        fields = ['pk', 'title', 'description', 'order', 'form', 'is_grid']
 
 
 class FieldRawCreateSerializer(serializers.ModelSerializer):
