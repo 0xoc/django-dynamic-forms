@@ -164,4 +164,4 @@ class FieldRawCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Field
-        fields = ['pk', 'title', 'sub_form', 'order', 'is_greed']
+        fields = ['pk', 'title', 'sub_form', 'order', 'is_grid']
