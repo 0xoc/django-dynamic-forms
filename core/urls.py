@@ -2,7 +2,8 @@ from django.urls import path
 from core.views.form_views import RetrieveSubFormView, CreateRawSubForm, AddFieldToSubForm, AddElementToField, \
     ElementTypesList, TemplateRetrieveView, CreateFormFromTemplate, CreateTemplateView, ListTemplatesView, FormsIFilled, \
     FormsOfTemplate, UpdateElement
-from core.views.user_profile_views import CreateUserProfileView, MyUserProfileInfo, UserProfileInfo, UserProfileList
+from core.views.user_profile_views import CreateUserProfileView, MyUserProfileInfo, UserProfileInfo, UserProfileList, \
+    AuthToken
 
 urlpatterns = [
     # user profile endpoints
@@ -10,7 +11,7 @@ urlpatterns = [
     path('user-profile/my-info/retrieve-update-delete/', MyUserProfileInfo.as_view()),
     path('user-profile/<int:user_profile_id>/retrieve-update-delete/', UserProfileInfo.as_view()),
     path('user-profile/list/', UserProfileList.as_view()),
-
+    path('auth/', AuthToken.as_view()),
     # form endpoints
     path('template/create/', CreateTemplateView.as_view()),
     path('template/<int:template_id>/', TemplateRetrieveView.as_view()),

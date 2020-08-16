@@ -5,6 +5,8 @@ from core.models import Input, SelectElement, DateTimeElement, SubForm, Field, C
     TimeElement, Form
 from core.serializers.FormSerializers.common_serializers import DataSerializer
 from core.serializers.FormSerializers.serializers_headers import base_fields, base_field_fields
+from core.serializers.UserProfileSerializer.user_profile_serializers import UserProfileCreateSerializer, \
+    UserProfilePublicRetrieve
 from core.sub_form_fields import get_related_elements
 
 
@@ -110,7 +112,8 @@ class SubFormRetrieveSerializer(serializers.ModelSerializer):
 class FormRetrieveSerializer(serializers.ModelSerializer):
     """Retrieve form info with filler info and detailed sub_form info"""
     sub_forms = SubFormRetrieveSerializer(many=True, read_only=True)
+    filler = UserProfilePublicRetrieve()
 
     class Meta:
         model = Form
-        fields = ['pk', 'base_template', "sub_forms"]
+        fields = ['pk', "filler", 'base_template', "sub_forms"]

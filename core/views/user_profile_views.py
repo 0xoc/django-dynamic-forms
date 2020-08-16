@@ -1,8 +1,11 @@
-from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
+from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView, GenericAPIView
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from core.models import UserProfile
 from core.permissions import IsSuperuser, IsLoggedIn
-from core.serializers.UserProfileSerializer.user_profile_serializers import UserProfileCreateSerializer
+from core.serializers.UserProfileSerializer.user_profile_serializers import UserProfileCreateSerializer, \
+    AuthTokenSerializer
 
 
 class CreateUserProfileView(CreateAPIView):
@@ -39,3 +42,24 @@ class UserProfileList(ListAPIView):
 
     serializer_class = UserProfileCreateSerializer
     queryset = UserProfile.objects.all()
+
+
+class AuthToken(GenericAPIView):
+    """Return user with token"""
+    serializer_class = AuthTokenSerializer
+
+    def post(self, request, *args, **kwargs):
+        username = request.data.get('username')
+        password = request.data.get('password')
+
+        try:
+            user_profile = UserProfile.objects.get(user__username=username)
+
+            if user_profile.user.check_password(password):
+
+                return Response(UserProfileCreateSerializer(instance=user_profile).data)
+
+            raise UserProfile.DoesNotExist
+
+        except UserProfile.DoesNotExist:
+            return Response({'detail': "Invalid Username and password"}, status=400)

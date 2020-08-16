@@ -50,3 +50,19 @@ class UserProfileCreateSerializer(serializers.ModelSerializer):
 
         return instance
 
+
+class UserProfilePublicRetrieve(serializers.ModelSerializer):
+    """Profile serializer"""
+
+    user = UserSerializer()
+
+    class Meta:
+        model = UserProfile
+        fields = ['pk', 'user', ]
+
+
+class AuthTokenSerializer(serializers.Serializer):
+
+    username = serializers.CharField()
+    password = serializers.CharField()
+
