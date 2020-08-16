@@ -82,7 +82,6 @@ class SubForm(models.Model):
     description = models.CharField(max_length=1000, blank=True, null=True)
     order = models.IntegerField(default=0)
     form = models.ForeignKey(Form, related_name="sub_forms", on_delete=models.CASCADE)
-    is_grid = models.BooleanField(default=False)
 
 
 class Field(models.Model):
@@ -92,6 +91,7 @@ class Field(models.Model):
     sub_form = models.ForeignKey(SubForm, related_name="fields", on_delete=models.CASCADE)
     title = models.CharField(max_length=255, blank=True, null=True)
     order = models.IntegerField(default=0)
+    is_grid = models.BooleanField(default=False)
 
 
 class Element(models.Model):
