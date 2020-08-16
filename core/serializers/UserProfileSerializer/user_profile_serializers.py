@@ -1,9 +1,11 @@
+from abc import ABC
+
 from core.models import UserProfile
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserCreateSerializer(serializers.ModelSerializer):
     """Django user serializer"""
 
     class Meta:
@@ -16,10 +18,19 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
 
+class UserRetrieveSerializer(serializers.ModelSerializer):
+    """Django user serializer"""
+
+    class Meta:
+        model = User
+        fields = ['pk', 'username', 'email', 'is_active',
+                  'first_name', 'last_name', 'is_superuser', ]
+
+
 class UserProfileCreateSerializer(serializers.ModelSerializer):
     """Internal User Profile serializer"""
 
-    user = UserSerializer()
+    user = UserCreateSerializer()
 
     class Meta:
         model = UserProfile
@@ -54,7 +65,7 @@ class UserProfileCreateSerializer(serializers.ModelSerializer):
 class UserProfilePublicRetrieve(serializers.ModelSerializer):
     """Profile serializer"""
 
-    user = UserSerializer()
+    user = UserRetrieveSerializer()
 
     class Meta:
         model = UserProfile
@@ -62,7 +73,5 @@ class UserProfilePublicRetrieve(serializers.ModelSerializer):
 
 
 class AuthTokenSerializer(serializers.Serializer):
-
     username = serializers.CharField()
     password = serializers.CharField()
-
