@@ -1,8 +1,8 @@
 from rest_framework import serializers
 
-from core.element_types import INPUT, DATETIME, SELECT, RADIO, CHECKBOX, DATE, TIME, INT, FLOAT
+from core.element_types import INPUT, DATETIME, SELECT, RADIO, CHECKBOX, DATE, TIME, INT, FLOAT, TEXTAREA
 from core.models import Input, SelectElement, DateTimeElement, SubForm, Field, CheckboxElement, DateElement, \
-    TimeElement, Form, IntegerField, FloatField
+    TimeElement, Form, IntegerField, FloatField, TextArea
 from core.serializers.FormSerializers.common_serializers import DataSerializer, CharFieldSerializer
 from core.serializers.FormSerializers.serializers_headers import base_fields, base_field_fields, abstract_base_fields
 from core.serializers.UserProfileSerializer.user_profile_serializers import UserProfileCreateSerializer, \
@@ -17,6 +17,12 @@ class InputRetrieveUpdateSerializer(serializers.ModelSerializer):
         model = Input
         fields = base_fields
 
+class TextAreaRetrieveUpdateSerializer(serializers.ModelSerializer):
+    """simple input RUD serializer"""
+
+    class Meta:
+        model = TextArea
+        fields = base_fields
 
 class SelectElementRetrieveUpdateSerializer(serializers.ModelSerializer):
     """Select element RUD serializer"""
@@ -94,7 +100,8 @@ retrieve_serializers = {
     DATE: DateRetrieveUpdateSerializer,
     TIME: TimeRetrieveUpdateSerializer,
     INT: IntegerRetrieveUpdateSerializer,
-    FLOAT: FloatRetrieveUpdateSerializer
+    FLOAT: FloatRetrieveUpdateSerializer,
+    TEXTAREA: TextAreaRetrieveUpdateSerializer
 }
 
 

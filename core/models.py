@@ -1,7 +1,7 @@
 from django.db import models, transaction
 from rest_framework.authtoken.models import Token
 
-from .element_types import INPUT, DATETIME, SELECT, RADIO, CHECKBOX, DATE, TIME, INT, FLOAT
+from .element_types import INPUT, DATETIME, SELECT, RADIO, CHECKBOX, DATE, TIME, INT, FLOAT, TEXTAREA
 from django.contrib.auth.models import User
 
 from .sub_form_fields import get_related_elements
@@ -128,6 +128,13 @@ class Input(Element):
     """ Simple Text Input """
     value = models.CharField(max_length=1024, blank=True, null=True)
     type = INPUT
+    filters = ['icontains', 'startswith', 'endswith']
+
+
+class TextArea(Element):
+    """ Simple Text Input """
+    value = models.CharField(max_length=10240, blank=True, null=True)
+    type = TEXTAREA
     filters = ['icontains', 'startswith', 'endswith']
 
 

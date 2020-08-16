@@ -27,6 +27,7 @@ FLOAT = "float"
 TIME = "time"
 DATETIME = "datetime"
 RANGE = "range"
+TEXTAREA = "textarea"
 
 element_types = ((INPUT, _("Input")),
                  (SELECT, _("Select")),
@@ -37,7 +38,8 @@ element_types = ((INPUT, _("Input")),
                  (DATETIME, _("Datetime")),
                  (RANGE, _("Range")),
                  (INT, _("int")),
-                 (FLOAT, _("FLOAT")))
+                 (FLOAT, _("FLOAT")),
+                 (TEXTAREA, _("text area")))
 
 
 element_types_list = [e[0] for e in element_types]
