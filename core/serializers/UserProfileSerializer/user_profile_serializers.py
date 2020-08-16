@@ -49,6 +49,9 @@ class UserProfileCreateSerializer(serializers.ModelSerializer):
         return user_profile
 
     def update(self, instance, validated_data):
+        # ignore password
+        validated_data.pop('password', None)
+
         user_updates = validated_data.pop('user')
 
         # update user

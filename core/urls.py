@@ -12,6 +12,7 @@ urlpatterns = [
     path('user-profile/<int:user_profile_id>/retrieve-update-delete/', UserProfileInfo.as_view()),
     path('user-profile/list/', UserProfileList.as_view()),
     path('auth/', AuthToken.as_view()),
+
     # form endpoints
     path('template/create/', CreateTemplateView.as_view()),
     path('template/<int:template_id>/', TemplateRetrieveView.as_view()),
