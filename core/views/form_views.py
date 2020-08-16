@@ -119,7 +119,6 @@ class AddElementToField(CreateAPIView):
     def get_serializer_class(self):
         """Get serializer based on filed type"""
         _element_type = self.kwargs.get('element_type')
-
         return create_serializers.get(_element_type, None)
 
 

@@ -22,6 +22,8 @@ SELECT = "select"
 RADIO = "radio"
 CHECKBOX = "checkbox"
 DATE = "date"
+INT = "int"
+FLOAT = "float"
 TIME = "time"
 DATETIME = "datetime"
 RANGE = "range"
@@ -33,7 +35,9 @@ element_types = ((INPUT, _("Input")),
                  (DATE, _("Date")),
                  (TIME, _("Time")),
                  (DATETIME, _("Datetime")),
-                 (RANGE, _("Range")))
+                 (RANGE, _("Range")),
+                 (INT, _("int")),
+                 (FLOAT, _("FLOAT")))
 
 
 element_types_list = [e[0] for e in element_types]

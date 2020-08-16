@@ -1,10 +1,10 @@
 from rest_framework import serializers
 
-from core.element_types import INPUT, DATETIME, SELECT, RADIO, CHECKBOX, DATE, TIME
+from core.element_types import INPUT, DATETIME, SELECT, RADIO, CHECKBOX, DATE, TIME, INT, FLOAT
 from core.models import Input, SelectElement, DateTimeElement, SubForm, Field, CheckboxElement, DateElement, \
-    TimeElement, Form
-from core.serializers.FormSerializers.common_serializers import DataSerializer
-from core.serializers.FormSerializers.serializers_headers import base_fields, base_field_fields
+    TimeElement, Form, IntegerField, FloatField
+from core.serializers.FormSerializers.common_serializers import DataSerializer, CharFieldSerializer
+from core.serializers.FormSerializers.serializers_headers import base_fields, base_field_fields, abstract_base_fields
 from core.serializers.UserProfileSerializer.user_profile_serializers import UserProfileCreateSerializer, \
     UserProfilePublicRetrieve
 from core.sub_form_fields import get_related_elements
@@ -39,10 +39,11 @@ class RadioRetrieveUpdateSerializer(serializers.ModelSerializer):
 class CheckboxRetrieveUpdateSerializer(serializers.ModelSerializer):
     """Checkbox RUD serializer"""
     data = DataSerializer(many=True)
+    values = CharFieldSerializer(many=True)
 
     class Meta:
         model = CheckboxElement
-        fields = base_fields + ['data', ]
+        fields = abstract_base_fields + ['data', 'values']
 
 
 class DateRetrieveUpdateSerializer(serializers.ModelSerializer):
@@ -61,6 +62,22 @@ class TimeRetrieveUpdateSerializer(serializers.ModelSerializer):
         fields = base_fields
 
 
+class IntegerRetrieveUpdateSerializer(serializers.ModelSerializer):
+    """Integer RUD serializer"""
+
+    class Meta:
+        model = IntegerField
+        fields = base_fields
+
+
+class FloatRetrieveUpdateSerializer(serializers.ModelSerializer):
+    """Float RUD serializer"""
+
+    class Meta:
+        model = FloatField
+        fields = base_fields
+
+
 class DateTimeRetrieveSerializer(serializers.ModelSerializer):
     class Meta:
         model = DateTimeElement
@@ -76,6 +93,8 @@ retrieve_serializers = {
     CHECKBOX: CheckboxRetrieveUpdateSerializer,
     DATE: DateRetrieveUpdateSerializer,
     TIME: TimeRetrieveUpdateSerializer,
+    INT: IntegerRetrieveUpdateSerializer,
+    FLOAT: FloatRetrieveUpdateSerializer
 }
 
 

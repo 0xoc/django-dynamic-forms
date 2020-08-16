@@ -1,10 +1,10 @@
 from rest_framework import serializers
 
 from core.models import Input, SelectElement, SubForm, DateTimeElement, Data, Field, RadioElement, \
-    CheckboxElement, DateElement, TimeElement, Form
-from core.serializers.FormSerializers.common_serializers import DataSerializer
-from core.element_types import INPUT, DATETIME, SELECT, RADIO, CHECKBOX, DATE, TIME
-from core.serializers.FormSerializers.serializers_headers import base_element_fields
+    CheckboxElement, DateElement, TimeElement, Form, IntegerField, FloatField, CharField
+from core.serializers.FormSerializers.common_serializers import DataSerializer, CharFieldSerializer
+from core.element_types import INPUT, DATETIME, SELECT, RADIO, CHECKBOX, DATE, TIME, INT, FLOAT
+from core.serializers.FormSerializers.serializers_headers import base_element_fields, abstract_element_fields
 
 
 class InputCreateSerializer(serializers.ModelSerializer):
@@ -12,6 +12,22 @@ class InputCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Input
+        fields = base_element_fields
+
+
+class IntegerCreateSerializer(serializers.ModelSerializer):
+    """int create serializer"""
+
+    class Meta:
+        model = IntegerField
+        fields = base_element_fields
+
+
+class FloatCreateSerializer(serializers.ModelSerializer):
+    """float create serializer"""
+
+    class Meta:
+        model = FloatField
         fields = base_element_fields
 
 
@@ -58,10 +74,22 @@ class RadioCreateSerializer(CreateElementWithData):
 class CheckboxCreateSerializer(CreateElementWithData):
     """Checkbox create serializer"""
     data = DataSerializer(many=True)
+    values = CharFieldSerializer(many=True)
 
     class Meta:
         model = CheckboxElement
-        fields = base_element_fields + ['data', ]
+        fields = abstract_element_fields + ['data', 'values']
+
+    def create(self, validated_data):
+
+        values = validated_data.pop('values', None)
+        check_box = super(CheckboxCreateSerializer, self).create(validated_data)
+
+        # create values
+        for value in values:
+            CharField.objects.create(**value, check_box=check_box)
+
+        return check_box
 
 
 class DateCreateSerializer(serializers.ModelSerializer):
@@ -97,6 +125,8 @@ create_serializers = {
     CHECKBOX: CheckboxCreateSerializer,
     DATE: DateCreateSerializer,
     TIME: TimeCreateSerializer,
+    INT: IntegerCreateSerializer,
+    FLOAT: FloatCreateSerializer
 }
 
 

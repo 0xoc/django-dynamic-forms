@@ -1,7 +1,7 @@
 from django.db import models, transaction
 from rest_framework.authtoken.models import Token
 
-from .element_types import INPUT, DATETIME, SELECT, RADIO, CHECKBOX, DATE, TIME
+from .element_types import INPUT, DATETIME, SELECT, RADIO, CHECKBOX, DATE, TIME, INT, FLOAT
 from django.contrib.auth.models import User
 
 from .sub_form_fields import get_related_elements
@@ -124,7 +124,7 @@ class DateTimeElement(Element):
 
     value = models.DateTimeField(blank=True, null=True)
     type = DATETIME
-    filters = ['gt', 'lt']
+    filters = ['', 'gt', 'lt', 'gte', 'lte']
 
 
 class SelectElement(Element):
@@ -147,10 +147,15 @@ class RadioElement(Element):
     data = models.ManyToManyField("Data")
 
 
+class CharField(models.Model):
+    """Raw char field"""
+    value = models.CharField(max_length=1024, blank=True, null=True)
+    check_box = models.ForeignKey("CheckboxElement", related_name="values", on_delete=models.CASCADE)
+
+
 class CheckboxElement(Element):
     """Html checkbox element with options"""
 
-    value = models.CharField(max_length=1024, blank=True, null=True)
     type = CHECKBOX
     filters = ['', ]  # empty filter string means exact match
 
@@ -162,7 +167,7 @@ class DateElement(Element):
 
     value = models.DateField(blank=True, null=True)
     type = DATE
-    filters = ['', ]  # empty filter string means exact match
+    filters = ['', 'gt', 'lt', 'gte', 'lte']  # empty filter string means exact match
 
 
 class TimeElement(Element):
@@ -170,7 +175,23 @@ class TimeElement(Element):
 
     value = models.TimeField(blank=True, null=True)
     type = TIME
-    filters = ['', ]  # empty filter string means exact match
+    filters = ['', 'gt', 'lt', 'gte', 'lte']  # empty filter string means exact match
+
+
+class IntegerField(Element):
+    """Html Int element with options"""
+
+    value = models.IntegerField(blank=True, null=True)
+    type = INT
+    filters = ['', 'gt', 'lt', 'gte', 'lte']  # empty filter string means exact match
+
+
+class FloatField(Element):
+    """Html TimeField element with options"""
+
+    value = models.FloatField(blank=True, null=True)
+    type = FLOAT
+    filters = ['', 'gt', 'lt', 'gte', 'lte']  # empty filter string means exact match
 
 
 class Data(models.Model):
@@ -186,5 +207,6 @@ elements = {
     DATETIME: DateTimeElement,
     RADIO: RadioElement,
     CHECKBOX: CheckboxElement,
-    SELECT: SelectElement
+    SELECT: SelectElement,
+    INT: IntegerField
 }
