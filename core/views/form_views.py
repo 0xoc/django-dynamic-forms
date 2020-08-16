@@ -12,6 +12,7 @@ from core.serializers.FormSerializers.create_serializers import SubFormRawCreate
 from core.serializers.FormSerializers.retreive_serializers import SubFormRetrieveSerializer, FormRetrieveSerializer
 from core.serializers.FormSerializers.create_serializers import create_serializers
 from core.models import SubForm, Form, elements
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 class RetrieveSubFormView(RetrieveAPIView):
@@ -65,6 +66,7 @@ class CreateTemplateView(CreateAPIView):
     def perform_create(self, serializer):
         serializer.save(creator=self.request.user.user_profile)
 
+
 class ListTemplatesView(ListAPIView):
     """List All Template Forms"""
     permission_classes = [IsLoggedIn, ]
@@ -76,8 +78,11 @@ class ListTemplatesView(ListAPIView):
 
 class FormsOfTemplate(ListAPIView):
     """List All Forms from the given template"""
-    permission_classes = [IsLoggedIn, ]
+    permission_classes = [IsLoggedIn, IsSuperuser]
     serializer_class = FormRetrieveSerializer
+    filter_backends = [DjangoFilterBackend, ]
+
+    filterset_fields = ['filler', ]
 
     def get_queryset(self):
         return Form.objects.filter(base_template__pk=self.kwargs.get('template_id'))
@@ -87,9 +92,13 @@ class FormsIFilled(ListAPIView):
     """List All Forms that the currently logged in user filled"""
     permission_classes = [IsLoggedIn, ]
     serializer_class = FormRetrieveSerializer
+    filter_backends = [DjangoFilterBackend, ]
+
+    filterset_fields = ['base_template', ]
 
     def get_queryset(self):
         return Form.objects.filter(filler=self.request.user.user_profile)
+
 
 class CreateRawSubForm(CreateAPIView):
     """Create a new sub form with fields"""
@@ -127,6 +136,7 @@ class UpdateElement(RetrieveUpdateDestroyAPIView):
     def get_object(self):
         return get_object_or_404(elements.get(self.kwargs.get('element_type')),
                                  pk=self.kwargs.get('element_id'))
+
 
 class ElementTypesList(APIView):
 
