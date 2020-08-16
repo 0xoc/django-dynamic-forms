@@ -57,9 +57,21 @@ class Form(models.Model):
 
                     # duplicate elements
                     for element in _elements:
+                        _data = None
+                        if hasattr(element, "data"):
+                            _data = element.data.all()
+
                         element.pk = None
                         element.field = field
                         element.save()
+
+                        # duplicate any data if available
+                        if _data:
+                            for data in _data:
+                                data.pk = None
+                                data.save()
+                                element.data.add(data)
+
         return self
 
 class SubForm(models.Model):
