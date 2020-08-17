@@ -14,6 +14,7 @@ class InputCreateSerializer(serializers.ModelSerializer):
         model = Input
         fields = base_element_fields
 
+
 class TextAreaCreateSerializer(serializers.ModelSerializer):
     """text area create serializer"""
 
@@ -88,7 +89,6 @@ class CheckboxCreateSerializer(CreateElementWithData):
         fields = abstract_element_fields + ['data', 'values']
 
     def create(self, validated_data):
-
         values = validated_data.pop('values', None)
         check_box = super(CheckboxCreateSerializer, self).create(validated_data)
 
@@ -153,7 +153,7 @@ class SubFormRawCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SubForm
-        fields = ['pk', 'title', 'description', 'order', 'form',]
+        fields = ['pk', 'title', 'description', 'order', 'form', ]
 
 
 class FieldRawCreateSerializer(serializers.ModelSerializer):
