@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import *
 
-admin.site.register(Form)
+admin.site.register(Template)
 admin.site.register(SubForm)
 admin.site.register(DateTimeElement)
 admin.site.register(SelectElement)

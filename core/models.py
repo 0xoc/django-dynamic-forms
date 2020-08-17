@@ -17,12 +17,10 @@ class UserProfile(models.Model):
         return str(token.key)
 
 
-class Form(models.Model):
-    filler = models.ForeignKey(UserProfile, related_name="forms",
-                               on_delete=models.SET_NULL, blank=True, null=True)
+class Template(models.Model):
+
     creator = models.ForeignKey(UserProfile, related_name="templates",
                                 on_delete=models.CASCADE)
-    base_template = models.ForeignKey("Form", related_name="forms", on_delete=models.CASCADE, blank=True, null=True)
     title = models.CharField(max_length=255)
 
     def create_filling_form(self):
@@ -30,7 +28,7 @@ class Form(models.Model):
 
             # duplicate form info
             if not self.base_template:
-                _base_template = Form.objects.get(pk=self.pk)
+                _base_template = Template.objects.get(pk=self.pk)
             else:
                 _base_template = self.base_template
 
@@ -81,7 +79,7 @@ class SubForm(models.Model):
     title = models.CharField(max_length=255, blank=True, null=True)
     description = models.CharField(max_length=1000, blank=True, null=True)
     order = models.IntegerField(default=0)
-    form = models.ForeignKey(Form, related_name="sub_forms", on_delete=models.CASCADE)
+    template = models.ForeignKey(Template, related_name="sub_forms", on_delete=models.CASCADE)
 
 
 class Field(models.Model):
@@ -119,6 +117,8 @@ class Element(models.Model):
     order = models.IntegerField(default=0)
 
     field = models.ForeignKey(Field, related_name="elements_%(class)s", on_delete=models.CASCADE)
+
+    answer_of = models.ForeignKey("self", related_name="answers", on_delete=models.CASCADE, blank=True, null=True)
 
     class Meta:
         abstract = True

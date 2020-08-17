@@ -11,7 +11,7 @@ from core.serializers.FormSerializers.create_serializers import SubFormRawCreate
     TemplateRawCreateSerializer
 from core.serializers.FormSerializers.retreive_serializers import SubFormRetrieveSerializer, FormRetrieveSerializer
 from core.serializers.FormSerializers.create_serializers import create_serializers
-from core.models import SubForm, Form, elements
+from core.models import SubForm, Template, elements
 from django_filters.rest_framework import DjangoFilterBackend
 
 
@@ -28,7 +28,7 @@ class TemplateRetrieveView(RetrieveUpdateDestroyAPIView):
     """RUD template"""
     permission_classes = [IsLoggedIn, IsSuperuser]
     serializer_class = FormRetrieveSerializer
-    queryset = Form.objects.all()
+    queryset = Template.objects.all()
 
     lookup_field = 'pk'
     lookup_url_kwarg = 'template_id'
@@ -41,7 +41,7 @@ class CreateFormFromTemplate(CreateModelMixin, APIView):
 
     def create(self, request, *args, **kwargs):
         # get template form
-        template = get_object_or_404(Form, pk=kwargs.get('template_id'))
+        template = get_object_or_404(Template, pk=kwargs.get('template_id'))
         user_profile = request.user.user_profile
 
         # create a new form and set filler
@@ -73,7 +73,7 @@ class ListTemplatesView(ListAPIView):
     serializer_class = FormRetrieveSerializer
 
     def get_queryset(self):
-        return Form.objects.filter(base_template=None)
+        return Template.objects.filter(base_template=None)
 
 
 class FormsOfTemplate(ListAPIView):
@@ -85,7 +85,7 @@ class FormsOfTemplate(ListAPIView):
     filterset_fields = ['filler', ]
 
     def get_queryset(self):
-        return Form.objects.filter(base_template__pk=self.kwargs.get('template_id'))
+        return Template.objects.filter(base_template__pk=self.kwargs.get('template_id'))
 
 
 class FormsIFilled(ListAPIView):
@@ -97,7 +97,7 @@ class FormsIFilled(ListAPIView):
     filterset_fields = ['base_template', ]
 
     def get_queryset(self):
-        return Form.objects.filter(filler=self.request.user.user_profile)
+        return Template.objects.filter(filler=self.request.user.user_profile)
 
 
 class CreateRawSubForm(CreateAPIView):

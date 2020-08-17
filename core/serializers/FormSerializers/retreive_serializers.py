@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from core.element_types import INPUT, DATETIME, SELECT, RADIO, CHECKBOX, DATE, TIME, INT, FLOAT, TEXTAREA
 from core.models import Input, SelectElement, DateTimeElement, SubForm, Field, CheckboxElement, DateElement, \
-    TimeElement, Form, IntegerField, FloatField, TextArea
+    TimeElement, Template, IntegerField, FloatField, TextArea
 from core.serializers.FormSerializers.common_serializers import DataSerializer, CharFieldSerializer
 from core.serializers.FormSerializers.serializers_headers import base_fields, base_field_fields, abstract_base_fields
 from core.serializers.UserProfileSerializer.user_profile_serializers import UserProfileCreateSerializer, \
@@ -17,12 +17,14 @@ class InputRetrieveUpdateSerializer(serializers.ModelSerializer):
         model = Input
         fields = base_fields
 
+
 class TextAreaRetrieveUpdateSerializer(serializers.ModelSerializer):
     """simple input RUD serializer"""
 
     class Meta:
         model = TextArea
         fields = base_fields
+
 
 class SelectElementRetrieveUpdateSerializer(serializers.ModelSerializer):
     """Select element RUD serializer"""
@@ -132,14 +134,14 @@ class SubFormRetrieveSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SubForm
-        fields = ['pk', 'title', 'description', 'order', 'fields', 'order',]
+        fields = ['pk', 'title', 'description', 'order', 'fields', 'order', ]
 
 
 class FormRetrieveSerializer(serializers.ModelSerializer):
     """Retrieve form info with filler info and detailed sub_form info"""
     sub_forms = SubFormRetrieveSerializer(many=True, read_only=True)
-    filler = UserProfilePublicRetrieve()
+    creator = UserProfilePublicRetrieve()
 
     class Meta:
-        model = Form
-        fields = ['pk', "filler", 'base_template', "sub_forms"]
+        model = Template
+        fields = ['pk', 'creator', "sub_forms"]
