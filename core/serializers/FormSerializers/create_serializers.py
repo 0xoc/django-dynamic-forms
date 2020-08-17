@@ -1,9 +1,9 @@
 from rest_framework import serializers
 
 from core.models import Input, SelectElement, SubForm, DateTimeElement, Data, Field, RadioElement, \
-    CheckboxElement, DateElement, TimeElement, Template, IntegerField, FloatField, CharField, TextArea
+    CheckboxElement, DateElement, TimeElement, Template, IntegerField, FloatField, CharField, TextArea, BooleanField
 from core.serializers.FormSerializers.common_serializers import DataSerializer, CharFieldSerializer
-from core.element_types import INPUT, DATETIME, SELECT, RADIO, CHECKBOX, DATE, TIME, INT, FLOAT, TEXTAREA
+from core.element_types import INPUT, DATETIME, SELECT, RADIO, CHECKBOX, DATE, TIME, INT, FLOAT, TEXTAREA, BOOLEAN
 from core.serializers.FormSerializers.serializers_headers import base_element_fields, abstract_element_fields
 
 
@@ -12,6 +12,14 @@ class InputCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Input
+        fields = base_element_fields
+
+
+class BooleanCreateSerializer(serializers.ModelSerializer):
+    """boolean create serializer"""
+
+    class Meta:
+        model = BooleanField
         fields = base_element_fields
 
 
@@ -134,7 +142,8 @@ create_serializers = {
     TIME: TimeCreateSerializer,
     INT: IntegerCreateSerializer,
     FLOAT: FloatCreateSerializer,
-    TEXTAREA: TextAreaCreateSerializer
+    TEXTAREA: TextAreaCreateSerializer,
+    BOOLEAN: BooleanCreateSerializer
 }
 
 

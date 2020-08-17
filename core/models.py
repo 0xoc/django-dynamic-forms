@@ -149,6 +149,14 @@ class Input(Element):
     filters = ['icontains', 'startswith', 'endswith']
 
 
+class BooleanField(Element):
+    """ Simple Text Input """
+    value = models.BooleanField(blank=True, null=True)
+    type = INPUT
+    value_field = 'value'
+    filters = ['', ]
+
+
 class TextArea(Element):
     """ Simple Text Input """
     value = models.CharField(max_length=10240, blank=True, null=True)
@@ -254,4 +262,7 @@ elements = {
     CHECKBOX: CheckboxElement,
     SELECT: SelectElement,
     INT: IntegerField,
+    TEXTAREA: TextArea,
+    BOOLEAN: BooleanField,
+    FLOAT: FloatField
 }
