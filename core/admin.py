@@ -13,4 +13,5 @@ admin.site.register(DateElement)
 admin.site.register(RadioElement)
 admin.site.register(CheckboxElement)
 
+admin.site.register(Form)
 

@@ -1,10 +1,13 @@
+from ctypes.wintypes import BOOLEAN
+
 from django.db import models, transaction
+from django.db.models import Q, F
 from rest_framework.authtoken.models import Token
 
 from .element_types import INPUT, DATETIME, SELECT, RADIO, CHECKBOX, DATE, TIME, INT, FLOAT, TEXTAREA
 from django.contrib.auth.models import User
 
-from .sub_form_fields import get_related_elements
+from .sub_form_fields import get_related_attrs
 
 
 class UserProfile(models.Model):
@@ -47,7 +50,7 @@ class Template(models.Model):
 
                 # duplicate sub form fields
                 for field in _fields:
-                    _elements = get_related_elements(field)
+                    _elements = get_related_attrs(field)
 
                     field.pk = None
                     field.sub_form = sub_form
@@ -80,6 +83,7 @@ class Form(models.Model):
     filler = models.ForeignKey(UserProfile, related_name="filled_forms", on_delete=models.CASCADE)
     fork_date = models.DateTimeField(auto_now_add=True)
     last_change_date = models.DateTimeField(auto_now=True)
+    template = models.ForeignKey(Template, related_name="forms", on_delete=models.CASCADE)
 
 
 class SubForm(models.Model):
@@ -133,6 +137,7 @@ class Element(models.Model):
     form = models.ForeignKey(Form, related_name="answers_%(class)s", on_delete=models.CASCADE, blank=True, null=True)
 
     class Meta:
+        unique_together = ['answer_of', 'form']
         abstract = True
 
 
@@ -140,6 +145,7 @@ class Input(Element):
     """ Simple Text Input """
     value = models.CharField(max_length=1024, blank=True, null=True)
     type = INPUT
+    value_field = 'value'
     filters = ['icontains', 'startswith', 'endswith']
 
 
@@ -147,6 +153,7 @@ class TextArea(Element):
     """ Simple Text Input """
     value = models.CharField(max_length=10240, blank=True, null=True)
     type = TEXTAREA
+    value_field = 'value'
     filters = ['icontains', 'startswith', 'endswith']
 
 
@@ -155,6 +162,7 @@ class DateTimeElement(Element):
 
     value = models.DateTimeField(blank=True, null=True)
     type = DATETIME
+    value_field = 'value'
     filters = ['', 'gt', 'lt', 'gte', 'lte']
 
 
@@ -164,6 +172,7 @@ class SelectElement(Element):
     value = models.CharField(max_length=1024, blank=True, null=True)
     type = SELECT
     filters = ['', ]  # empty filter string means exact match
+    value_field = 'value'
 
     data = models.ManyToManyField("Data")
 
@@ -174,6 +183,7 @@ class RadioElement(Element):
     value = models.CharField(max_length=1024, blank=True, null=True)
     type = RADIO
     filters = ['', ]  # empty filter string means exact match
+    value_field = 'value'
 
     data = models.ManyToManyField("Data")
 
@@ -189,7 +199,7 @@ class CheckboxElement(Element):
 
     type = CHECKBOX
     filters = ['', ]  # empty filter string means exact match
-
+    value_field = 'values'
     data = models.ManyToManyField("Data")
 
 
@@ -198,6 +208,7 @@ class DateElement(Element):
 
     value = models.DateField(blank=True, null=True)
     type = DATE
+    value_field = 'value'
     filters = ['', 'gt', 'lt', 'gte', 'lte']  # empty filter string means exact match
 
 
@@ -206,6 +217,7 @@ class TimeElement(Element):
 
     value = models.TimeField(blank=True, null=True)
     type = TIME
+    value_field = 'value'
     filters = ['', 'gt', 'lt', 'gte', 'lte']  # empty filter string means exact match
 
 
@@ -214,6 +226,7 @@ class IntegerField(Element):
 
     value = models.IntegerField(blank=True, null=True)
     type = INT
+    value_field = 'value'
     filters = ['', 'gt', 'lt', 'gte', 'lte']  # empty filter string means exact match
 
 
@@ -222,6 +235,7 @@ class FloatField(Element):
 
     value = models.FloatField(blank=True, null=True)
     type = FLOAT
+    value_field = 'value'
     filters = ['', 'gt', 'lt', 'gte', 'lte']  # empty filter string means exact match
 
 
@@ -239,5 +253,5 @@ elements = {
     RADIO: RadioElement,
     CHECKBOX: CheckboxElement,
     SELECT: SelectElement,
-    INT: IntegerField
+    INT: IntegerField,
 }

@@ -9,9 +9,10 @@ from core.element_types import element_types
 from core.permissions import IsLoggedIn, IsSuperuser
 from core.serializers.FormSerializers.create_serializers import SubFormRawCreateSerializer, FieldRawCreateSerializer, \
     TemplateRawCreateSerializer
-from core.serializers.FormSerializers.retreive_serializers import SubFormRetrieveSerializer, FormRetrieveSerializer
+from core.serializers.FormSerializers.retreive_serializers import SubFormRetrieveSerializer, TemplateRetrieveSerializer, \
+    FormRetrieveSerializer
 from core.serializers.FormSerializers.create_serializers import create_serializers
-from core.models import SubForm, Template, elements
+from core.models import SubForm, Template, elements, Form
 from django_filters.rest_framework import DjangoFilterBackend
 
 
@@ -27,11 +28,21 @@ class RetrieveSubFormView(RetrieveAPIView):
 class TemplateRetrieveView(RetrieveUpdateDestroyAPIView):
     """RUD template"""
     permission_classes = [IsLoggedIn, IsSuperuser]
-    serializer_class = FormRetrieveSerializer
+    serializer_class = TemplateRetrieveSerializer
     queryset = Template.objects.all()
 
     lookup_field = 'pk'
     lookup_url_kwarg = 'template_id'
+
+
+class FormRetrieveView(RetrieveUpdateDestroyAPIView):
+    """RUD Form"""
+    permission_classes = [IsLoggedIn, ]
+    serializer_class = FormRetrieveSerializer
+    queryset = Form.objects.all()
+
+    lookup_field = 'pk'
+    lookup_url_kwarg = 'form_id'
 
 
 class CreateFormFromTemplate(CreateModelMixin, APIView):
@@ -49,7 +60,7 @@ class CreateFormFromTemplate(CreateModelMixin, APIView):
         form.filler = user_profile
         form.save()
 
-        form_data = FormRetrieveSerializer(instance=form).data
+        form_data = TemplateRetrieveSerializer(instance=form).data
 
         return Response(form_data)
 
@@ -70,7 +81,7 @@ class CreateTemplateView(CreateAPIView):
 class ListTemplatesView(ListAPIView):
     """List All Template Forms"""
     permission_classes = [IsLoggedIn, ]
-    serializer_class = FormRetrieveSerializer
+    serializer_class = TemplateRetrieveSerializer
 
     def get_queryset(self):
         return Template.objects.filter(base_template=None)
@@ -79,7 +90,7 @@ class ListTemplatesView(ListAPIView):
 class FormsOfTemplate(ListAPIView):
     """List All Forms from the given template"""
     permission_classes = [IsLoggedIn, IsSuperuser]
-    serializer_class = FormRetrieveSerializer
+    serializer_class = TemplateRetrieveSerializer
     filter_backends = [DjangoFilterBackend, ]
 
     filterset_fields = ['filler', ]
@@ -91,7 +102,7 @@ class FormsOfTemplate(ListAPIView):
 class FormsIFilled(ListAPIView):
     """List All Forms that the currently logged in user filled"""
     permission_classes = [IsLoggedIn, ]
-    serializer_class = FormRetrieveSerializer
+    serializer_class = TemplateRetrieveSerializer
     filter_backends = [DjangoFilterBackend, ]
 
     filterset_fields = ['base_template', ]
