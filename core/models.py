@@ -18,7 +18,7 @@ class UserProfile(models.Model):
 
 
 class Template(models.Model):
-
+    """Base template for a form that can be filled later"""
     creator = models.ForeignKey(UserProfile, related_name="templates",
                                 on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
@@ -72,6 +72,16 @@ class Template(models.Model):
 
         return self
 
+
+class Form(models.Model):
+    """A Form is like a fork of a template, it includes elements,
+    but elements are regarded as answers to the base template"""
+
+    filler = models.ForeignKey(UserProfile, related_name="filled_forms", on_delete=models.CASCADE)
+    fork_date = models.DateTimeField(auto_now_add=True)
+    last_change_date = models.DateTimeField(auto_now=True)
+
+
 class SubForm(models.Model):
     """
     SubForms make up different sections of each form
@@ -115,10 +125,12 @@ class Element(models.Model):
 
     # display order of the field
     order = models.IntegerField(default=0)
-
     field = models.ForeignKey(Field, related_name="elements_%(class)s", on_delete=models.CASCADE)
 
+    # these fields are used for an element that
+    # will be regarded as an answer to an element of the same type
     answer_of = models.ForeignKey("self", related_name="answers", on_delete=models.CASCADE, blank=True, null=True)
+    form = models.ForeignKey(Form, related_name="answers_%(class)s", on_delete=models.CASCADE, blank=True, null=True)
 
     class Meta:
         abstract = True
