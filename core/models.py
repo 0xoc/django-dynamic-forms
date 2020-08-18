@@ -23,6 +23,10 @@ class Template(models.Model):
                                 on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
 
+    @property
+    def forms_count(self):
+        return sum(self.forms.all())
+
 
 class Form(models.Model):
     """A Form is like a fork of a template, it includes elements,
