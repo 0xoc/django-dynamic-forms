@@ -15,6 +15,8 @@ from core.serializers.FormSerializers.create_serializers import create_serialize
 from core.models import SubForm, Template, elements, Form
 from django_filters.rest_framework import DjangoFilterBackend
 
+from core.sub_form_fields import get_related_attrs
+
 
 class RetrieveSubFormView(RetrieveAPIView):
     """Retrieve basic sub form info with fields data"""
@@ -56,6 +58,23 @@ class CreateFormFromTemplate(CreateAPIView):
         serializer.save(filler=self.request.user.user_profile)
 
 
+class AnswerElementOfForm(CreateAPIView):
+    """Create a new form from the given template form,
+    and set the filler to the currently logged in user"""
+
+    permission_classes = [IsLoggedIn, ]  # todo: add filler
+    serializer_class = FormCreateSerializer
+
+    def create(self, request, *args, **kwargs):
+        form = get_object_or_404(Form, pk=kwargs.get('form_id'))
+        template = form.template
+
+        # if the given element id refers to the template's element,
+        # create an answer for it
+        pass
+
+
+
 class CreateTemplateView(CreateAPIView):
     """Create Raw Form As Template"""
 
@@ -70,9 +89,7 @@ class ListTemplatesView(ListAPIView):
     """List All Template Forms"""
     permission_classes = [IsLoggedIn, ]
     serializer_class = TemplateRetrieveSerializer
-
-    def get_queryset(self):
-        return Template.objects.filter(base_template=None)
+    queryset = Template.objects.all()
 
 
 class FormsOfTemplate(ListAPIView):
