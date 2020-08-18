@@ -17,7 +17,7 @@ urlpatterns = [
     path('template/create/', CreateTemplateView.as_view()),
     path('template/<int:template_id>/', TemplateRetrieveView.as_view()),
     path('form/<int:form_id>/', FormRetrieveView.as_view()),    # redundant
-    path('create-form-from-template/<int:template_id>/', CreateFormFromTemplate.as_view()),
+    path('create-form-from-template/', CreateFormFromTemplate.as_view()),
     path('template/list/', ListTemplatesView.as_view()),
 
     # form lists

@@ -23,55 +23,6 @@ class Template(models.Model):
                                 on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
 
-    def create_filling_form(self):
-        with transaction.atomic():
-
-            # duplicate form info
-            if not self.base_template:
-                _base_template = Template.objects.get(pk=self.pk)
-            else:
-                _base_template = self.base_template
-
-            self.base_template = _base_template
-            self.pk = None
-
-            self.save()
-
-            # duplicate sub_forms
-            for sub_form in self.base_template.sub_forms.all():
-                _fields = sub_form.fields.all()
-
-                sub_form.pk = None
-                sub_form.form = self
-                sub_form.save()
-
-                # duplicate sub form fields
-                for field in _fields:
-                    _elements = get_related_attrs(field)
-
-                    field.pk = None
-                    field.sub_form = sub_form
-                    field.save()
-
-                    # duplicate elements
-                    for element in _elements:
-                        _data = None
-                        if hasattr(element, "data"):
-                            _data = element.data.all()
-
-                        element.pk = None
-                        element.field = field
-                        element.save()
-
-                        # duplicate any data if available
-                        if _data:
-                            for data in _data:
-                                data.pk = None
-                                data.save()
-                                element.data.add(data)
-
-        return self
-
 
 class Form(models.Model):
     """A Form is like a fork of a template, it includes elements,
@@ -144,14 +95,6 @@ class Input(Element):
     type = INPUT
     value_field = 'value'
     filters = ['icontains', 'startswith', 'endswith']
-
-
-class BooleanField(Element):
-    """ Simple Text Input """
-    value = models.BooleanField(blank=True, null=True)
-    type = INPUT
-    value_field = 'value'
-    filters = ['', ]
 
 
 class TextArea(Element):
@@ -260,6 +203,5 @@ elements = {
     SELECT: SelectElement,
     INT: IntegerField,
     TEXTAREA: TextArea,
-    BOOLEAN: BooleanField,
     FLOAT: FloatField
 }

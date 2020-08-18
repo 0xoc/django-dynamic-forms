@@ -1,10 +1,12 @@
 from rest_framework import serializers
 
 from core.models import Input, SelectElement, SubForm, DateTimeElement, Data, Field, RadioElement, \
-    CheckboxElement, DateElement, TimeElement, Template, IntegerField, FloatField, CharField, TextArea, BooleanField
+    CheckboxElement, DateElement, TimeElement, Template, IntegerField, FloatField, CharField, TextArea, \
+    Form
 from core.serializers.FormSerializers.common_serializers import DataSerializer, CharFieldSerializer
 from core.element_types import INPUT, DATETIME, SELECT, RADIO, CHECKBOX, DATE, TIME, INT, FLOAT, TEXTAREA, BOOLEAN
 from core.serializers.FormSerializers.serializers_headers import base_element_fields, abstract_element_fields
+from core.serializers.UserProfileSerializer.user_profile_serializers import UserProfilePublicRetrieve
 
 
 class InputCreateSerializer(serializers.ModelSerializer):
@@ -12,14 +14,6 @@ class InputCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Input
-        fields = base_element_fields
-
-
-class BooleanCreateSerializer(serializers.ModelSerializer):
-    """boolean create serializer"""
-
-    class Meta:
-        model = BooleanField
         fields = base_element_fields
 
 
@@ -143,7 +137,6 @@ create_serializers = {
     INT: IntegerCreateSerializer,
     FLOAT: FloatCreateSerializer,
     TEXTAREA: TextAreaCreateSerializer,
-    BOOLEAN: BooleanCreateSerializer
 }
 
 
@@ -174,3 +167,13 @@ class FieldRawCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Field
         fields = ['pk', 'title', 'sub_form', 'order', 'is_grid']
+
+
+class FormCreateSerializer(serializers.ModelSerializer):
+    """Create from from base template"""
+    filler = UserProfilePublicRetrieve(read_only=True)
+
+    class Meta:
+        model = Form
+        fields = ['pk', 'filler', 'template', 'fork_date', 'last_change_date']
+

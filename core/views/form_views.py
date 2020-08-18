@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 from core.element_types import element_types
 from core.permissions import IsLoggedIn, IsSuperuser
 from core.serializers.FormSerializers.create_serializers import SubFormRawCreateSerializer, FieldRawCreateSerializer, \
-    TemplateRawCreateSerializer
+    TemplateRawCreateSerializer, FormCreateSerializer
 from core.serializers.FormSerializers.retreive_serializers import SubFormRetrieveSerializer, TemplateRetrieveSerializer, \
     FormRetrieveSerializer
 from core.serializers.FormSerializers.create_serializers import create_serializers
@@ -45,27 +45,15 @@ class FormRetrieveView(RetrieveUpdateDestroyAPIView):
     lookup_url_kwarg = 'form_id'
 
 
-class CreateFormFromTemplate(CreateModelMixin, APIView):
+class CreateFormFromTemplate(CreateAPIView):
     """Create a new form from the given template form,
     and set the filler to the currently logged in user"""
     permission_classes = [IsLoggedIn, ]
 
-    def create(self, request, *args, **kwargs):
-        # get template form
-        template = get_object_or_404(Template, pk=kwargs.get('template_id'))
-        user_profile = request.user.user_profile
+    serializer_class = FormCreateSerializer
 
-        # create a new form and set filler
-        form = template.create_filling_form()
-        form.filler = user_profile
-        form.save()
-
-        form_data = TemplateRetrieveSerializer(instance=form).data
-
-        return Response(form_data)
-
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
+    def perform_create(self, serializer):
+        serializer.save(filler=self.request.user.user_profile)
 
 
 class CreateTemplateView(CreateAPIView):
