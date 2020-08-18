@@ -24,7 +24,7 @@ class UserRetrieveSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['pk', 'username', 'email', 'is_active',
-                  'first_name', 'last_name', 'is_superuser', ]
+                  'first_name', 'last_name', 'is_superuser', 'get_full_name']
 
 
 class UserProfileCreateSerializer(serializers.ModelSerializer):
