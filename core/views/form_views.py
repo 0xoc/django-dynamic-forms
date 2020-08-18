@@ -63,9 +63,15 @@ class AnswerElementOfForm(CreateAPIView):
     and set the filler to the currently logged in user"""
 
     permission_classes = [IsLoggedIn, ]  # todo: add filler
-    serializer_class = FormCreateSerializer
 
-    def create(self, request, *args, **kwargs):
+    def get_serializer_class(self):
+        """Get serializer based on filed type"""
+        _element_type = self.kwargs.get('element_type')
+        return create_serializers.get(_element_type, None)
+
+    def perform_create(self, serializer):
+        kwargs = self.kwargs
+
         form = get_object_or_404(Form, pk=kwargs.get('form_id'))
         template = form.template
 

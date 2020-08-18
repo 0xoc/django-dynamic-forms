@@ -18,8 +18,8 @@ urlpatterns = [
     path('template/<int:template_id>/', TemplateRetrieveView.as_view()),
     path('form/<int:form_id>/', FormRetrieveView.as_view()),
 
-    path('create-form-from-template/', CreateFormFromTemplate.as_view()),
-    # path('form/<int:form_id>/answer/<answer_type>/<int:element_id>/'),
+    # path('create-form-from-template/', CreateFormFromTemplate.as_view()),
+    path('form/<int:form_id>/answer/<answer_type>/<int:element_id>/'),
     path('template/list/', ListTemplatesView.as_view()),
 
     # form lists
