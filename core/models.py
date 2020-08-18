@@ -1,10 +1,7 @@
-from ctypes.wintypes import BOOLEAN
-
 from django.db import models, transaction
-from django.db.models import Q, F
 from rest_framework.authtoken.models import Token
 
-from .element_types import INPUT, DATETIME, SELECT, RADIO, CHECKBOX, DATE, TIME, INT, FLOAT, TEXTAREA
+from .element_types import INPUT, DATETIME, SELECT, RADIO, CHECKBOX, DATE, TIME, INT, FLOAT, TEXTAREA, BOOLEAN
 from django.contrib.auth.models import User
 
 from .sub_form_fields import get_related_attrs
