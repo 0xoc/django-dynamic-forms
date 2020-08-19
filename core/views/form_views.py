@@ -10,7 +10,7 @@ from core.permissions import IsLoggedIn, IsSuperuser
 from core.serializers.FormSerializers.create_serializers import SubFormRawCreateSerializer, FieldRawCreateSerializer, \
     TemplateRawCreateSerializer, FormCreateSerializer, get_create_serializer
 from core.serializers.FormSerializers.retreive_serializers import SubFormRetrieveSerializer, TemplateRetrieveSerializer, \
-    FormRetrieveSerializer
+    FormRetrieveSerializer, get_retrieve_serializer
 from core.models import SubForm, Template, elements, Form
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -65,8 +65,7 @@ class AnswerElementOfForm(CreateAPIView):
 
     def get_serializer_class(self):
         """Get serializer based on filed type"""
-        _element_type = self.kwargs.get('element_type')
-        return create_serializers.get(_element_type, None)
+        return get_retrieve_serializer(self.kwargs.get('element_type'))
 
     def perform_create(self, serializer):
         kwargs = self.kwargs
@@ -168,9 +167,7 @@ class UpdateElement(RetrieveUpdateDestroyAPIView):
 
     def get_serializer_class(self):
         """Get serializer based on filed type"""
-        _element_type = self.kwargs.get('element_type')
-
-        return create_serializers.get(_element_type, None)
+        return get_retrieve_serializer(self.kwargs.get('element_type'))
 
     def get_object(self):
         return get_object_or_404(elements.get(self.kwargs.get('element_type')),

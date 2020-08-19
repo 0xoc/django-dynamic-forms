@@ -4,107 +4,27 @@ from core.element_types import INPUT, DATETIME, SELECT, RADIO, CHECKBOX, DATE, T
 from core.models import Input, SelectElement, DateTimeElement, SubForm, Field, CheckboxElement, DateElement, \
     TimeElement, Template, IntegerField, FloatField, TextArea, elements, Form
 from core.serializers.FormSerializers.common_serializers import DataSerializer, CharFieldSerializer
-from core.serializers.FormSerializers.serializers_headers import base_fields, base_field_fields, abstract_base_fields
+from core.serializers.FormSerializers.serializers_headers import base_fields, base_field_fields, abstract_base_fields, \
+    abstract_element_fields
 from core.serializers.UserProfileSerializer.user_profile_serializers import UserProfileCreateSerializer, \
     UserProfilePublicRetrieve
 from core.sub_form_fields import get_related_attrs
 
 
-class InputRetrieveUpdateSerializer(serializers.ModelSerializer):
-    """simple input RUD serializer"""
+def get_retrieve_serializer(element_type):
+    """Return retrieve serializer base od element type"""
 
-    class Meta:
-        model = Input
-        fields = base_fields
+    class _RetrieveSerializer(serializers.ModelSerializer):
+        data = DataSerializer(many=True)
 
+        if elements.get(element_type).value_field == "values":
+            values = CharFieldSerializer(many=True)
 
-class TextAreaRetrieveUpdateSerializer(serializers.ModelSerializer):
-    """simple input RUD serializer"""
+        class Meta:
+            model = elements.get(element_type)
+            fields = abstract_element_fields + [elements.get(element_type).value_field, ]
 
-    class Meta:
-        model = TextArea
-        fields = base_fields
-
-
-class SelectElementRetrieveUpdateSerializer(serializers.ModelSerializer):
-    """Select element RUD serializer"""
-    data = DataSerializer(many=True)
-
-    class Meta:
-        model = SelectElement
-        fields = base_fields + ['data', ]
-
-
-class RadioRetrieveUpdateSerializer(serializers.ModelSerializer):
-    """Radio RUD serializer"""
-    data = DataSerializer(many=True)
-
-    class Meta:
-        model = SelectElement
-        fields = base_fields + ['data', ]
-
-
-class CheckboxRetrieveUpdateSerializer(serializers.ModelSerializer):
-    """Checkbox RUD serializer"""
-    data = DataSerializer(many=True)
-    values = CharFieldSerializer(many=True)
-
-    class Meta:
-        model = CheckboxElement
-        fields = abstract_base_fields + ['data', 'values']
-
-
-class DateRetrieveUpdateSerializer(serializers.ModelSerializer):
-    """Checkbox RUD serializer"""
-
-    class Meta:
-        model = DateElement
-        fields = base_fields
-
-
-class TimeRetrieveUpdateSerializer(serializers.ModelSerializer):
-    """Checkbox RUD serializer"""
-
-    class Meta:
-        model = TimeElement
-        fields = base_fields
-
-
-class IntegerRetrieveUpdateSerializer(serializers.ModelSerializer):
-    """Integer RUD serializer"""
-
-    class Meta:
-        model = IntegerField
-        fields = base_fields
-
-
-class FloatRetrieveUpdateSerializer(serializers.ModelSerializer):
-    """Float RUD serializer"""
-
-    class Meta:
-        model = FloatField
-        fields = base_fields
-
-
-class DateTimeRetrieveSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = DateTimeElement
-        fields = base_fields
-
-
-# map of element types to their retrieve serializer
-retrieve_serializers = {
-    INPUT: InputRetrieveUpdateSerializer,
-    DATETIME: DateTimeRetrieveSerializer,
-    SELECT: SelectElementRetrieveUpdateSerializer,
-    RADIO: RadioRetrieveUpdateSerializer,
-    CHECKBOX: CheckboxRetrieveUpdateSerializer,
-    DATE: DateRetrieveUpdateSerializer,
-    TIME: TimeRetrieveUpdateSerializer,
-    INT: IntegerRetrieveUpdateSerializer,
-    FLOAT: FloatRetrieveUpdateSerializer,
-    TEXTAREA: TextAreaRetrieveUpdateSerializer,
-}
+    return _RetrieveSerializer
 
 
 class FieldRetrieveSerializer(serializers.ModelSerializer):
@@ -121,7 +41,7 @@ class FieldRetrieveSerializer(serializers.ModelSerializer):
         _fields_data = []
 
         for field in _fields:
-            _Serializer = retrieve_serializers.get(type(field).type)
+            _Serializer = get_retrieve_serializer(type(field).type)
             _field_data = _Serializer(instance=field).data
             _fields_data.append(_field_data)
 
@@ -175,9 +95,8 @@ class FormRetrieveSerializer(serializers.ModelSerializer):
                     if element.answer_of is not None:
                         continue
                     AnswerModel = elements.get(element.type)
-                    _serializer = retrieve_serializers.get(AnswerModel.type)
+                    _serializer = get_retrieve_serializer(AnswerModel.type)
                     base_element_data = _serializer(instance=element).data
-                    print(element.type)
 
                     try:
                         answer = AnswerModel.objects.get(answer_of=element, form=instance)
