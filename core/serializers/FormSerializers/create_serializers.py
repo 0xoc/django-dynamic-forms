@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework import serializers
 
 from core.models import Input, SelectElement, SubForm, DateTimeElement, Data, Field, RadioElement, \
@@ -67,6 +68,51 @@ def get_create_serializer(element_type):
                 return super(_CreateSerializer, self).create(validated_data)
 
     return _CreateSerializer
+
+
+def get_update_serializer(element_type):
+    class UpdateSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = elements.get(element_type)
+            fields = abstract_element_fields + [model.value_field, ]
+
+    return UpdateSerializer
+
+
+def get_set_value_serializer(element_type):
+    """Return set value serializer, set value serializer provides
+    a serializer that either
+    updates the value field or values field based on element type"""
+
+    class SetValueSerializer(serializers.ModelSerializer):
+        if elements.get(element_type).value_field == "values":
+            values = CharFieldSerializer(many=True)
+
+        class Meta:
+            model = elements.get(element_type)
+            fields = [model.value_field, ]
+
+        def update(self, instance, validated_data):
+            values = validated_data.pop('values', [])
+
+            if self.Meta.model.value_field == 'values':
+                # remove old values and set new values
+
+                for value in instance.values.all():
+                    value.delete()
+
+                # add new values
+                for value in values:
+                    _value = CharField(**value)
+                    _value.save()
+
+                    instance.values.add(_value)
+
+            instance.value = validated_data.get('value')
+
+            return instance
+
+    return SetValueSerializer
 
 
 class TemplateRawCreateSerializer(serializers.ModelSerializer):

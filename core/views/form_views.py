@@ -1,5 +1,5 @@
 from rest_framework.generics import RetrieveAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView, get_object_or_404, \
-    ListAPIView, RetrieveUpdateAPIView
+    ListAPIView, RetrieveUpdateAPIView, UpdateAPIView
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -7,8 +7,10 @@ from rest_framework.views import APIView
 
 from core.element_types import element_types
 from core.permissions import IsLoggedIn, IsSuperuser
+from core.serializers.FormSerializers.common_serializers import CharFieldSerializer
 from core.serializers.FormSerializers.create_serializers import SubFormRawCreateSerializer, FieldRawCreateSerializer, \
-    TemplateRawCreateSerializer, FormCreateSerializer, get_create_serializer
+    TemplateRawCreateSerializer, FormCreateSerializer, get_create_serializer, get_update_serializer, \
+    get_set_value_serializer
 from core.serializers.FormSerializers.retreive_serializers import SubFormRetrieveSerializer, TemplateRetrieveSerializer, \
     FormRetrieveSerializer, get_retrieve_serializer
 from core.models import SubForm, Template, elements, Form
@@ -57,7 +59,7 @@ class CreateFormFromTemplate(CreateAPIView):
         serializer.save(filler=self.request.user.user_profile)
 
 
-class AnswerElementOfForm(CreateAPIView):
+class AnswerElementOfForm(UpdateAPIView):
     """Create a new form from the given template form,
     and set the filler to the currently logged in user"""
 
@@ -65,9 +67,9 @@ class AnswerElementOfForm(CreateAPIView):
 
     def get_serializer_class(self):
         """Get serializer based on filed type"""
-        return get_retrieve_serializer(self.kwargs.get('element_type'))
+        return get_set_value_serializer(self.kwargs.get('element_type'))
 
-    def perform_create(self, serializer):
+    def get_object(self):
         kwargs = self.kwargs
 
         form = get_object_or_404(Form, pk=kwargs.get('form_id'))
@@ -79,7 +81,7 @@ class AnswerElementOfForm(CreateAPIView):
         # if the given element id refers to the template's element,
         # create an answer for it
 
-        element = elements.get(element_type).get(pk=element_id)
+        element = elements.get(element_type).objects.get(pk=element_id)
 
         if not element.answer_of:
             # it is the base base template field
@@ -91,12 +93,15 @@ class AnswerElementOfForm(CreateAPIView):
             # check if there is an answer for this element
             answer_element = elements.get(element_type).objects.filter(form=form, answer_of=element)
             if not answer_element.exists():
-                serializer.save(answer_of=element)
+                return elements.get(element_type).objects.create(
+                    answer_of=element,
+                    form=form
+                )
             else:
-                print("existing")
-                answer_element.update(**serializer.data)
+                return answer_element.first()
         else:
-            elements.get(element_type).objects.filter(pk=element.pk).update(**serializer.data)
+            # element itself is the answer
+            return element
 
 
 class CreateTemplateView(CreateAPIView):
@@ -148,13 +153,13 @@ class CreateRawSubForm(CreateAPIView):
 
 class AddFieldToSubForm(CreateAPIView):
     """ Add a field to sub form """
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = [IsLoggedIn, IsSuperuser]
     serializer_class = FieldRawCreateSerializer
 
 
 class AddElementToField(CreateAPIView):
     """ Add a field to sub form """
-    permission_classes = [IsLoggedIn, ]
+    permission_classes = [IsLoggedIn, IsSuperuser]
 
     def get_serializer_class(self):
         """Get serializer based on filed type"""
@@ -163,15 +168,35 @@ class AddElementToField(CreateAPIView):
 
 class UpdateElement(RetrieveUpdateDestroyAPIView):
     """ Add a field to sub form """
-    permission_classes = [IsLoggedIn, ]
+    permission_classes = [IsLoggedIn, IsSuperuser]
 
     def get_serializer_class(self):
         """Get serializer based on filed type"""
-        return get_retrieve_serializer(self.kwargs.get('element_type'))
+        return get_update_serializer(self.kwargs.get('element_type'))
 
     def get_object(self):
         return get_object_or_404(elements.get(self.kwargs.get('element_type')),
                                  pk=self.kwargs.get('element_id'))
+
+
+class AddDataView(CreateAPIView):
+    """ Add a data to element"""
+    permission_classes = [IsLoggedIn, IsSuperuser]
+    serializer_class = CharFieldSerializer
+
+    def perform_create(self, serializer):
+        data = serializer.save()
+
+        # add to element
+        element = get_object_or_404(elements.get(self.kwargs.get('element_type')),
+                                    pk=self.kwargs.get('element_id'))
+        element.data.add(data)
+
+
+class DataRUDView(RetrieveUpdateAPIView):
+    """RUD data"""
+    permission_classes = [IsLoggedIn, IsSuperuser]
+    serializer_class = CharFieldSerializer
 
 
 class ElementTypesList(APIView):

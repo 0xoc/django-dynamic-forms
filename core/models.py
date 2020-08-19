@@ -78,7 +78,7 @@ class Element(models.Model):
     """
 
     # if the given element is used as answer
-    # title type order and field will be inherited from the answer of field
+    # title, type, order, and field will be inherited from the question field
     # when serializing the element
     title = models.CharField(max_length=255)
 
@@ -96,12 +96,15 @@ class Element(models.Model):
 
     # display order of the field
     order = models.IntegerField(default=0)
-    field = models.ForeignKey(Field, related_name="elements_%(class)s", on_delete=models.CASCADE, blank=True, null=True)
+    field = models.ForeignKey(Field, related_name="elements_%(class)s",
+                              on_delete=models.CASCADE, blank=True, null=True)
 
     # these fields are used for an element that
     # will be regarded as an answer to an element of the same type
-    answer_of = models.ForeignKey("self", related_name="answers", on_delete=models.CASCADE, blank=True, null=True)
-    form = models.ForeignKey(Form, related_name="answers_%(class)s", on_delete=models.CASCADE, blank=True, null=True)
+    answer_of = models.ForeignKey("self", related_name="answers",
+                                  on_delete=models.CASCADE, blank=True, null=True)
+    form = models.ForeignKey(Form, related_name="answers_%(class)s",
+                             on_delete=models.CASCADE, blank=True, null=True)
 
     class Meta:
         unique_together = ['answer_of', 'form']

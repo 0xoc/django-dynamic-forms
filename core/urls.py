@@ -1,7 +1,7 @@
 from django.urls import path
 from core.views.form_views import RetrieveSubFormView, CreateRawSubForm, AddFieldToSubForm, AddElementToField, \
     ElementTypesList, TemplateRetrieveView, CreateFormFromTemplate, CreateTemplateView, ListTemplatesView, FormsIFilled, \
-    FormsOfTemplate, UpdateElement, FormRetrieveView, AnswerElementOfForm
+    FormsOfTemplate, UpdateElement, FormRetrieveView, AnswerElementOfForm, DataRUDView, AddDataView
 from core.views.user_profile_views import CreateUserProfileView, MyUserProfileInfo, UserProfileInfo, UserProfileList, \
     AuthToken
 
@@ -19,23 +19,26 @@ urlpatterns = [
     path('form/<int:form_id>/', FormRetrieveView.as_view()),
 
     path('create-form-from-template/', CreateFormFromTemplate.as_view()),
-    path('form/<int:form_id>/answer/<element_type>/<int:element_id>/', AnswerElementOfForm.as_view()),
+    path('form/<int:form_id>/set-value/<element_type>/<int:element_id>/', AnswerElementOfForm.as_view()),
     path('template/list/', ListTemplatesView.as_view()),
 
     # form lists
     path('forms-of-template/<int:template_id>/', FormsOfTemplate.as_view()),
     path('forms-I-filled/list/', FormsIFilled.as_view()),
 
+
     # sub-form endpoints
     path('sub-form/<int:sub_form_id>/', RetrieveSubFormView.as_view()),
     path('sub-form/create/', CreateRawSubForm.as_view()),
 
     # field/element endpoints
-    path('field/create/', AddFieldToSubForm.as_view()),
-    path('field/<int:field_id>/', AddFieldToSubForm.as_view()),
+    path('field/create/', AddFieldToSubForm.as_view()),  # create field for todo: template
+    path('field/<int:field_id>/', AddFieldToSubForm.as_view()),  # update a todo: templates field
 
-    path('element/<element_type>/create/', AddElementToField.as_view()),
+    path('element/<element_type>/create/', AddElementToField.as_view()),  # create element for todo: template
     path('element/<element_type>/<int:element_id>/update-retrieve/', UpdateElement.as_view()),
+    path('element/<element_type>/<int:element_id>/add/data/', AddDataView.as_view()),
+    path('data/<int:data_id>/', DataRUDView.as_view()),
     path('element-types/list/', ElementTypesList.as_view())
 
 ]
