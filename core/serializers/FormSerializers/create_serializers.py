@@ -90,7 +90,7 @@ def get_set_value_serializer(element_type):
 
         class Meta:
             model = elements.get(element_type)
-            fields = [model.value_field, ]
+            fields = ['pk', model.value_field, ]
 
         def update(self, instance, validated_data):
             values = validated_data.pop('values', [])
@@ -108,9 +108,11 @@ def get_set_value_serializer(element_type):
 
                     instance.values.add(_value)
 
-            instance.value = validated_data.get('value')
-
-            return instance
+                return instance
+            else:
+                instance.value = validated_data.get('value')
+                instance.save()
+                return instance
 
     return SetValueSerializer
 
