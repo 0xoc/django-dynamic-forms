@@ -76,12 +76,27 @@ class Element(models.Model):
     following format: fields_class_name, where class_name is the name of the subclass :)
 
     """
+
+    # if the given element is used as answer
+    # title type order and field will be inherited from the answer of field
+    # when serializing the element
     title = models.CharField(max_length=255)
+
+    # Ex.: Input, checkbox, datetime, ...
     type = "ABC"
+
+    # some element may have more than one value at a given time (Ex. Check box)
+    # these elements save their values in "values" field as a CharField model
+    # default value field for elements is "value"
+    value_field = 'value'
+
+    # any extra data that may be needed for the given element, can be saved in Data as
+    # display, value pairs
+    data = models.ManyToManyField("Data")
 
     # display order of the field
     order = models.IntegerField(default=0)
-    field = models.ForeignKey(Field, related_name="elements_%(class)s", on_delete=models.CASCADE)
+    field = models.ForeignKey(Field, related_name="elements_%(class)s", on_delete=models.CASCADE, blank=True, null=True)
 
     # these fields are used for an element that
     # will be regarded as an answer to an element of the same type
@@ -97,7 +112,6 @@ class Input(Element):
     """ Simple Text Input """
     value = models.CharField(max_length=1024, blank=True, null=True)
     type = INPUT
-    value_field = 'value'
     filters = ['icontains', 'startswith', 'endswith']
 
 
@@ -105,7 +119,6 @@ class TextArea(Element):
     """ Simple Text Input """
     value = models.CharField(max_length=10240, blank=True, null=True)
     type = TEXTAREA
-    value_field = 'value'
     filters = ['icontains', 'startswith', 'endswith']
 
 
@@ -114,7 +127,6 @@ class DateTimeElement(Element):
 
     value = models.DateTimeField(blank=True, null=True)
     type = DATETIME
-    value_field = 'value'
     filters = ['', 'gt', 'lt', 'gte', 'lte']
 
 
@@ -124,9 +136,6 @@ class SelectElement(Element):
     value = models.CharField(max_length=1024, blank=True, null=True)
     type = SELECT
     filters = ['', ]  # empty filter string means exact match
-    value_field = 'value'
-
-    data = models.ManyToManyField("Data")
 
 
 class RadioElement(Element):
@@ -135,9 +144,6 @@ class RadioElement(Element):
     value = models.CharField(max_length=1024, blank=True, null=True)
     type = RADIO
     filters = ['', ]  # empty filter string means exact match
-    value_field = 'value'
-
-    data = models.ManyToManyField("Data")
 
 
 class CharField(models.Model):
@@ -152,7 +158,6 @@ class CheckboxElement(Element):
     type = CHECKBOX
     filters = ['', ]  # empty filter string means exact match
     value_field = 'values'
-    data = models.ManyToManyField("Data")
 
 
 class DateElement(Element):
@@ -160,7 +165,6 @@ class DateElement(Element):
 
     value = models.DateField(blank=True, null=True)
     type = DATE
-    value_field = 'value'
     filters = ['', 'gt', 'lt', 'gte', 'lte']  # empty filter string means exact match
 
 
@@ -169,7 +173,6 @@ class TimeElement(Element):
 
     value = models.TimeField(blank=True, null=True)
     type = TIME
-    value_field = 'value'
     filters = ['', 'gt', 'lt', 'gte', 'lte']  # empty filter string means exact match
 
 
@@ -178,7 +181,6 @@ class IntegerField(Element):
 
     value = models.IntegerField(blank=True, null=True)
     type = INT
-    value_field = 'value'
     filters = ['', 'gt', 'lt', 'gte', 'lte']  # empty filter string means exact match
 
 
@@ -187,7 +189,6 @@ class FloatField(Element):
 
     value = models.FloatField(blank=True, null=True)
     type = FLOAT
-    value_field = 'value'
     filters = ['', 'gt', 'lt', 'gte', 'lte']  # empty filter string means exact match
 
 

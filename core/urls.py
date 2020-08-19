@@ -1,7 +1,7 @@
 from django.urls import path
 from core.views.form_views import RetrieveSubFormView, CreateRawSubForm, AddFieldToSubForm, AddElementToField, \
     ElementTypesList, TemplateRetrieveView, CreateFormFromTemplate, CreateTemplateView, ListTemplatesView, FormsIFilled, \
-    FormsOfTemplate, UpdateElement, FormRetrieveView
+    FormsOfTemplate, UpdateElement, FormRetrieveView, AnswerElementOfForm
 from core.views.user_profile_views import CreateUserProfileView, MyUserProfileInfo, UserProfileInfo, UserProfileList, \
     AuthToken
 
@@ -19,7 +19,7 @@ urlpatterns = [
     path('form/<int:form_id>/', FormRetrieveView.as_view()),
 
     path('create-form-from-template/', CreateFormFromTemplate.as_view()),
-    # path('form/<int:form_id>/answer/<answer_type>/<int:element_id>/'),
+    path('form/<int:form_id>/answer/<element_type>/<int:element_id>/', AnswerElementOfForm.as_view()),
     path('template/list/', ListTemplatesView.as_view()),
 
     # form lists

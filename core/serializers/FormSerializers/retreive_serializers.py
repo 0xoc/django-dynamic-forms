@@ -172,9 +172,13 @@ class FormRetrieveSerializer(serializers.ModelSerializer):
             for field in sub_form.fields.all():
                 element_data = []
                 for element in get_related_attrs(field):
+                    if element.answer_of is not None:
+                        continue
                     AnswerModel = elements.get(element.type)
                     _serializer = retrieve_serializers.get(AnswerModel.type)
                     base_element_data = _serializer(instance=element).data
+                    print(element.type)
+
                     try:
                         answer = AnswerModel.objects.get(answer_of=element, form=instance)
                         answer_data = _serializer(instance=answer).data

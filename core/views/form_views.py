@@ -73,12 +73,32 @@ class AnswerElementOfForm(CreateAPIView):
         kwargs = self.kwargs
 
         form = get_object_or_404(Form, pk=kwargs.get('form_id'))
+        element_id = kwargs.get('element_id')
+        element_type = kwargs.get('element_type')
+
         template = form.template
 
         # if the given element id refers to the template's element,
         # create an answer for it
-        pass
 
+        element = elements.get(element_type).get(pk=element_id)
+
+        if not element.answer_of:
+            # it is the base base template field
+
+            # element must belong to the same template as forms template
+            if element.field.sub_form.template != template:
+                return Response({'detail': ['invalid element id']}, status=400)
+
+            # check if there is an answer for this element
+            answer_element = elements.get(element_type).objects.filter(form=form, answer_of=element)
+            if not answer_element.exists():
+                serializer.save(answer_of=element)
+            else:
+                print("existing")
+                answer_element.update(**serializer.data)
+        else:
+            elements.get(element_type).objects.filter(pk=element.pk).update(**serializer.data)
 
 
 class CreateTemplateView(CreateAPIView):
