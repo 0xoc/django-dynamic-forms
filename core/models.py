@@ -92,7 +92,7 @@ class Element(models.Model):
 
     # any extra data that may be needed for the given element, can be saved in Data as
     # display, value pairs
-    data = models.ManyToManyField("Data")
+    data = models.ManyToManyField("Data", blank=True)
 
     # display order of the field
     order = models.IntegerField(default=0)
@@ -149,12 +149,12 @@ class RadioElement(Element):
 class CharField(models.Model):
     """Raw char field"""
     value = models.CharField(max_length=1024, blank=True, null=True)
-    check_box = models.ForeignKey("CheckboxElement", related_name="values", on_delete=models.CASCADE)
 
 
 class CheckboxElement(Element):
     """Html checkbox element with options"""
 
+    values = models.ManyToManyField(CharField, blank=True)
     type = CHECKBOX
     filters = ['', ]  # empty filter string means exact match
     value_field = 'values'

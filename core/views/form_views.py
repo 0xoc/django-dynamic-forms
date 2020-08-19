@@ -8,10 +8,9 @@ from rest_framework.views import APIView
 from core.element_types import element_types
 from core.permissions import IsLoggedIn, IsSuperuser
 from core.serializers.FormSerializers.create_serializers import SubFormRawCreateSerializer, FieldRawCreateSerializer, \
-    TemplateRawCreateSerializer, FormCreateSerializer
+    TemplateRawCreateSerializer, FormCreateSerializer, get_create_serializer
 from core.serializers.FormSerializers.retreive_serializers import SubFormRetrieveSerializer, TemplateRetrieveSerializer, \
     FormRetrieveSerializer
-from core.serializers.FormSerializers.create_serializers import create_serializers
 from core.models import SubForm, Template, elements, Form
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -160,8 +159,7 @@ class AddElementToField(CreateAPIView):
 
     def get_serializer_class(self):
         """Get serializer based on filed type"""
-        _element_type = self.kwargs.get('element_type')
-        return create_serializers.get(_element_type, None)
+        return get_create_serializer(self.kwargs.get('element_type'))
 
 
 class UpdateElement(RetrieveUpdateDestroyAPIView):
