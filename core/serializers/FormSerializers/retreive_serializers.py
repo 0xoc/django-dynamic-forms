@@ -117,7 +117,6 @@ class FormRetrieveSerializer(serializers.ModelSerializer):
 
 class FormSimpleRetrieveSerializer(serializers.ModelSerializer):
     """Retrieve form info with filler info and detailed sub_form info"""
-    sub_forms = serializers.SerializerMethodField(read_only=True)
     filler = UserProfilePublicRetrieve(read_only=True)
 
     class Meta:
