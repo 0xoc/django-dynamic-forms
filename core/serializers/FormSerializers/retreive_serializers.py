@@ -121,4 +121,5 @@ class FormSimpleRetrieveSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Form
-        fields = ['pk', 'filler', 'fork_date', 'last_change_date', 'template', 'description']
+        fields = ['pk', 'filler', 'fork_date', 'last_change_date',
+                  'template', 'description']

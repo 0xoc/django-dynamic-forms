@@ -16,6 +16,9 @@ class UserProfile(models.Model):
         token, created = Token.objects.get_or_create(user=self.user)
         return str(token.key)
 
+    def __str__(self):
+        return str(self.user)
+
 
 class Template(models.Model):
     """Base template for a form that can be filled later"""
@@ -26,6 +29,9 @@ class Template(models.Model):
     @property
     def forms_count(self):
         return self.forms.count()
+
+    def __str__(self):
+        return str(self.title)
 
 
 class Form(models.Model):
@@ -38,6 +44,10 @@ class Form(models.Model):
     template = models.ForeignKey(Template, related_name="forms", on_delete=models.CASCADE)
     description = models.CharField(max_length=255, blank=True, null=True)
 
+    def __str__(self):
+        return "%s - %s" % (str(self.template), str(self.description))
+
+
 class SubForm(models.Model):
     """
     SubForms make up different sections of each form
@@ -46,6 +56,9 @@ class SubForm(models.Model):
     description = models.CharField(max_length=1000, blank=True, null=True)
     order = models.IntegerField(default=0)
     template = models.ForeignKey(Template, related_name="sub_forms", on_delete=models.CASCADE)
+
+    def __str__(self):
+        return "%s - %s" % (str(self.template), str(self.title))
 
 
 class Field(models.Model):
@@ -56,6 +69,9 @@ class Field(models.Model):
     title = models.CharField(max_length=255, blank=True, null=True)
     order = models.IntegerField(default=0)
     is_grid = models.BooleanField(default=False)
+
+    def __str__(self):
+        return "%s - %s" % (str(self.sub_form), str(self.title))
 
 
 class Element(models.Model):
@@ -105,6 +121,9 @@ class Element(models.Model):
                                   on_delete=models.CASCADE, blank=True, null=True)
     form = models.ForeignKey(Form, related_name="answers_%(class)s",
                              on_delete=models.CASCADE, blank=True, null=True)
+
+    def __str__(self):
+        return "%s - %s" % (str(self.field), str(self.title))
 
     class Meta:
         unique_together = ['answer_of', 'form']
