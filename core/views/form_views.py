@@ -13,7 +13,7 @@ from core.serializers.FormSerializers.create_serializers import SubFormRawCreate
     get_set_value_serializer
 from core.serializers.FormSerializers.retreive_serializers import SubFormRetrieveSerializer, TemplateRetrieveSerializer, \
     FormRetrieveSerializer, get_retrieve_serializer, FormSimpleRetrieveSerializer
-from core.models import SubForm, Template, elements, Form
+from core.models import SubForm, Template, elements, Form, Field
 from django_filters.rest_framework import DjangoFilterBackend
 
 from core.sub_form_fields import get_related_attrs
@@ -155,6 +155,16 @@ class AddFieldToSubForm(CreateAPIView):
     """ Add a field to sub form """
     permission_classes = [IsLoggedIn, IsSuperuser]
     serializer_class = FieldRawCreateSerializer
+
+
+class UpdateField(RetrieveUpdateDestroyAPIView):
+    """ Add a field to sub form """
+    permission_classes = [IsLoggedIn, IsSuperuser]
+    serializer_class = FieldRawCreateSerializer
+    queryset = Field.objects.all()
+
+    lookup_url_kwarg = 'field_id'
+    lookup_field = 'pk'
 
 
 class AddElementToField(CreateAPIView):

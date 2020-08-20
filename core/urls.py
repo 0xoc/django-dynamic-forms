@@ -1,7 +1,7 @@
 from django.urls import path
 from core.views.form_views import RetrieveSubFormView, CreateRawSubForm, AddFieldToSubForm, AddElementToField, \
     ElementTypesList, TemplateRetrieveView, CreateFormFromTemplate, CreateTemplateView, ListTemplatesView, FormsIFilled, \
-    FormsOfTemplate, UpdateElement, FormRetrieveView, AnswerElementOfForm, DataRUDView, AddDataView
+    FormsOfTemplate, UpdateElement, FormRetrieveView, AnswerElementOfForm, DataRUDView, AddDataView, UpdateField
 from core.views.user_profile_views import CreateUserProfileView, MyUserProfileInfo, UserProfileInfo, UserProfileList, \
     AuthToken
 
@@ -33,7 +33,7 @@ urlpatterns = [
 
     # field/element endpoints
     path('field/create/', AddFieldToSubForm.as_view()),  # create field for todo: template
-    path('field/<int:field_id>/', AddFieldToSubForm.as_view()),  # update a todo: templates field
+    path('field/<int:field_id>/', UpdateField.as_view()),  # update a todo: templates field
 
     path('element/<element_type>/create/', AddElementToField.as_view()),  # create element for todo: template
     path('element/<element_type>/<int:element_id>/update-retrieve/', UpdateElement.as_view()),
