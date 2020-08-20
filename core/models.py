@@ -36,7 +36,7 @@ class Form(models.Model):
     fork_date = models.DateTimeField(auto_now_add=True)
     last_change_date = models.DateTimeField(auto_now=True)
     template = models.ForeignKey(Template, related_name="forms", on_delete=models.CASCADE)
-
+    description = models.CharField(max_length=255, blank=True, null=True)
 
 class SubForm(models.Model):
     """

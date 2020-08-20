@@ -74,7 +74,7 @@ class FormRetrieveSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Form
-        fields = ['pk', 'filler', 'fork_date', 'last_change_date', "sub_forms", 'template']
+        fields = ['pk', 'filler', 'fork_date', 'last_change_date', "sub_forms", 'template', 'description']
 
     @staticmethod
     def get_sub_forms(instance):

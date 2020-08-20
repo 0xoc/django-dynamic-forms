@@ -152,4 +152,4 @@ class FormCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Form
-        fields = ['pk', 'filler', 'template', 'fork_date', 'last_change_date']
+        fields = ['pk', 'filler', 'template', 'fork_date', 'last_change_date', 'description']
