@@ -12,7 +12,7 @@ from core.serializers.FormSerializers.create_serializers import SubFormRawCreate
     TemplateRawCreateSerializer, FormCreateSerializer, get_create_serializer, get_update_serializer, \
     get_set_value_serializer
 from core.serializers.FormSerializers.retreive_serializers import SubFormRetrieveSerializer, TemplateRetrieveSerializer, \
-    FormRetrieveSerializer, get_retrieve_serializer
+    FormRetrieveSerializer, get_retrieve_serializer, FormSimpleRetrieveSerializer
 from core.models import SubForm, Template, elements, Form
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -124,7 +124,7 @@ class ListTemplatesView(ListAPIView):
 class FormsOfTemplate(ListAPIView):
     """List All Forms from the given template"""
     permission_classes = [IsLoggedIn, IsSuperuser]
-    serializer_class = FormRetrieveSerializer
+    serializer_class = FormSimpleRetrieveSerializer
     filter_backends = [DjangoFilterBackend, ]
 
     filterset_fields = ['filler', ]
