@@ -90,7 +90,9 @@ class FormRetrieveSerializer(serializers.ModelSerializer):
             data['fields'] = []
 
             for field in sub_form.fields.all():
-                element_data = []
+                base_field_data = FieldRetrieveSerializer(instance=field).data
+                base_field_data['elements'] = []
+
                 for element in get_related_attrs(field):
                     if element.answer_of is not None:
                         continue
@@ -103,12 +105,12 @@ class FormRetrieveSerializer(serializers.ModelSerializer):
                         answer_data = _serializer(instance=answer).data
                         base_element_data[AnswerModel.value_field] = answer_data[AnswerModel.value_field]
 
-                        element_data.append(base_element_data)
+                        base_field_data['elements'].append(base_element_data)
 
                     except AnswerModel.DoesNotExist:
-                        element_data.append(base_element_data)
+                        base_field_data['elements'].append(base_element_data)
 
-                data['fields'].append(element_data)
+                data['fields'].append(base_field_data)
             sub_forms_data.append(data)
         return sub_forms_data
 
