@@ -25,7 +25,7 @@ class Template(models.Model):
 
     @property
     def forms_count(self):
-        return count(self.forms.all())
+        return self.forms.all(),count()
 
 
 class Form(models.Model):
