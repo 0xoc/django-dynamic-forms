@@ -124,13 +124,13 @@ class ListTemplatesView(ListAPIView):
 class FormsOfTemplate(ListAPIView):
     """List All Forms from the given template"""
     permission_classes = [IsLoggedIn, IsSuperuser]
-    serializer_class = TemplateRetrieveSerializer
+    serializer_class = FormRetrieveSerializer
     filter_backends = [DjangoFilterBackend, ]
 
     filterset_fields = ['filler', ]
 
     def get_queryset(self):
-        return Template.objects.filter(base_template__pk=self.kwargs.get('template_id'))
+        return Form.objects.filter(template__pk=self.kwargs.get('template_id'))
 
 
 class FormsIFilled(ListAPIView):
