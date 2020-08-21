@@ -27,8 +27,8 @@ class UserRetrieveSerializer(serializers.ModelSerializer):
                   'first_name', 'last_name', 'is_superuser', 'get_full_name']
 
         extra_kwargs = {
-            'password': {'required': False, 'write_only': True},
-            'username': {'read_only': True, 'allow_null': True, 'allow_blank': True}
+            'password': {'required': False, 'write_only': True, 'allow_null': True, 'allow_blank': True},
+            'username': {'read_only': True}
         }
 
 
