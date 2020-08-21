@@ -1,3 +1,4 @@
+from django.db.models import Q
 from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView, GenericAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -41,7 +42,9 @@ class UserProfileList(ListAPIView):
     permission_classes = [IsLoggedIn, IsSuperuser]
 
     serializer_class = UserProfileCreateSerializer
-    queryset = UserProfile.objects.all()
+
+    def get_queryset(self):
+        return UserProfile.objects.filter(~Q(user=self.request.user)).order_by('-id')
 
 
 class AuthToken(GenericAPIView):
