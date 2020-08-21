@@ -64,10 +64,9 @@ class UserProfileUpdateSerializer(serializers.ModelSerializer):
         fields = ['pk', 'user', 'token']
 
     def update(self, instance, validated_data):
-        # ignore password
-        new_password = validated_data.pop('password', None)
 
         user_updates = validated_data.pop('user')
+        new_password = user_updates.pop('password', None)
 
         # update user
         User.objects.filter(pk=instance.user.pk).update(**user_updates)
