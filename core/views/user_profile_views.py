@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from core.models import UserProfile
 from core.permissions import IsSuperuser, IsLoggedIn
 from core.serializers.UserProfileSerializer.user_profile_serializers import UserProfileCreateSerializer, \
-    AuthTokenSerializer
+    AuthTokenSerializer, UserProfileUpdateSerializer
 
 
 class CreateUserProfileView(CreateAPIView):
@@ -21,7 +21,7 @@ class CreateUserProfileView(CreateAPIView):
 class MyUserProfileInfo(RetrieveUpdateDestroyAPIView):
     """RUD currently logged in user"""
     permission_classes = [IsLoggedIn, ]
-    serializer_class = UserProfileCreateSerializer
+    serializer_class = UserProfileUpdateSerializer
 
     def get_object(self):
         return self.request.user.user_profile
@@ -30,7 +30,7 @@ class MyUserProfileInfo(RetrieveUpdateDestroyAPIView):
 class UserProfileInfo(RetrieveUpdateDestroyAPIView):
     """RUD any user"""
     permission_classes = [IsLoggedIn, IsSuperuser]
-    serializer_class = UserProfileCreateSerializer
+    serializer_class = UserProfileUpdateSerializer
     queryset = UserProfile.objects.all()
 
     lookup_url_kwarg = 'user_profile_id'

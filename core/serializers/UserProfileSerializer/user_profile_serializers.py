@@ -23,8 +23,12 @@ class UserRetrieveSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['pk', 'username', 'email', 'is_active',
+        fields = ['pk', 'username', 'email', 'is_active', 'password',
                   'first_name', 'last_name', 'is_superuser', 'get_full_name']
+
+        extra_kwargs = {
+            'password': {'required': False, 'write_only': True}
+        }
 
 
 class UserProfileCreateSerializer(serializers.ModelSerializer):
@@ -47,6 +51,16 @@ class UserProfileCreateSerializer(serializers.ModelSerializer):
         user_profile.save()
 
         return user_profile
+
+
+class UserProfileUpdateSerializer(serializers.ModelSerializer):
+    """Internal User Profile serializer"""
+
+    user = UserRetrieveSerializer()
+
+    class Meta:
+        model = UserProfile
+        fields = ['pk', 'user', 'token']
 
     def update(self, instance, validated_data):
         # ignore password
