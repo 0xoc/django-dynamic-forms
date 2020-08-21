@@ -71,6 +71,7 @@ class UserProfileUpdateSerializer(serializers.ModelSerializer):
 
         # update user
         User.objects.filter(pk=instance.user.pk).update(**user_updates)
+        instance.user.refresh_from_db()
 
         if new_password:
             instance.user.set_password(new_password)
