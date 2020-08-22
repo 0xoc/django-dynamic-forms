@@ -133,6 +133,18 @@ class FormsOfTemplate(ListAPIView):
         return Form.objects.filter(template__pk=self.kwargs.get('template_id'))
 
 
+class FormsOfUserProfile(ListAPIView):
+    """List All Forms from the given template"""
+    permission_classes = [IsLoggedIn, IsSuperuser]
+    serializer_class = FormSimpleRetrieveSerializer
+    filter_backends = [DjangoFilterBackend, ]
+
+    filterset_fields = ['filler', ]
+
+    def get_queryset(self):
+        return Form.objects.filter(filler__pk=self.kwargs.get('user_profile_id'))
+
+
 class FormsIFilled(ListAPIView):
     """List All Forms that the currently logged in user filled"""
     permission_classes = [IsLoggedIn, ]

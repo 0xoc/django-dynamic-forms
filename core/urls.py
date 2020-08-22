@@ -1,7 +1,8 @@
 from django.urls import path
 from core.views.form_views import RetrieveSubFormView, CreateRawSubForm, AddFieldToSubForm, AddElementToField, \
     ElementTypesList, TemplateRetrieveView, CreateFormFromTemplate, CreateTemplateView, ListTemplatesView, FormsIFilled, \
-    FormsOfTemplate, UpdateElement, FormRetrieveView, AnswerElementOfForm, DataRUDView, AddDataView, UpdateField
+    FormsOfTemplate, UpdateElement, FormRetrieveView, AnswerElementOfForm, DataRUDView, AddDataView, UpdateField, \
+    FormsOfUserProfile
 from core.views.user_profile_views import CreateUserProfileView, MyUserProfileInfo, UserProfileInfo, UserProfileList, \
     AuthToken
 
@@ -18,12 +19,14 @@ urlpatterns = [
     path('template/<int:template_id>/', TemplateRetrieveView.as_view()),
     path('form/<int:form_id>/', FormRetrieveView.as_view()),
 
+
     path('create-form-from-template/', CreateFormFromTemplate.as_view()),
     path('form/<int:form_id>/set-value/<element_type>/<int:element_id>/', AnswerElementOfForm.as_view()),
     path('template/list/', ListTemplatesView.as_view()),
 
     # form lists
     path('forms-of-template/<int:template_id>/', FormsOfTemplate.as_view()),
+    path('forms-of/<int:user_profile_id>/', FormsOfUserProfile.as_view()),
     path('forms-I-filled/list/', FormsIFilled.as_view()),
 
 
