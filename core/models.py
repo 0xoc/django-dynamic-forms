@@ -195,7 +195,7 @@ class CheckboxElement(Element):
 
     values = models.ManyToManyField(CharField, blank=True)
     type = CHECKBOX
-    filters = [{"value": 'value__in', "display": 'شامل'}, ]  # empty filter string means exact match
+    filters = [{"value": 'value__contains', "display": 'شامل'}, ]  # empty filter string means exact match
     value_field = 'values'
 
 

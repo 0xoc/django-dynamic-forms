@@ -1,3 +1,6 @@
+import operator
+from functools import reduce
+
 from django.db.models import Q
 from rest_framework.generics import RetrieveAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView, get_object_or_404, \
     ListAPIView, RetrieveUpdateAPIView, UpdateAPIView, GenericAPIView
@@ -254,24 +257,40 @@ class FormFilterView(APIView):
                 # get element model
                 _Element = elements.get(rule['type'])
 
-                # if element has a single value
-                _related_field_name_value = "%s__value" % _Element.related_name_to_form()
+                # get value field through related name of the element
+                _related_field_name_value = "%s__%s" % (_Element.related_name_to_form(),
+                                                        _Element.value_field)
+
+                # to insure that the retrieved element answer corresponds to the queried element
                 _relate_filed_name_pk = "%s__answer_of__pk" % _Element.related_name_to_form()
 
+                # serializer the query element, this process converts query json to native types
+                # that can be used in object filtering
                 _Serializer = get_raw_converter_serializer(rule['type'])
                 serializer = _Serializer(data=rule)
                 serializer.is_valid(raise_exception=True)
                 _converted_value = serializer.validated_data.get(_Element.value_field)
 
-                _match_filter = {
-                    self.set_filter_on_field(_related_field_name_value,
-                                             rule['filter']): _converted_value,
-                }
+                if _Element.value_field == "values":
+                    # clear the _converted_value
+                    _converted_value = [v['value'] for v in _converted_value]
+                    match_Q = reduce(operator.and_,
+                                     (Q(
+                                         **{
+                                             self.set_filter_on_field(_related_field_name_value,
+                                                                      rule['filter']): x
+                                         }
+                                     ) for x in _converted_value))
+                else:
+                    match_Q = Q(**{
+                        self.set_filter_on_field(_related_field_name_value,
+                                                 rule['filter']): _converted_value,
+                    })
+
                 _pk_filter = {
                     _relate_filed_name_pk: rule['pk']
                 }
-                val = self.operator_table[matchType](val, Q(**_match_filter) & Q(**_pk_filter))
-
+                val = self.operator_table[matchType](val, match_Q & Q(**_pk_filter))
         return val
 
     def get_queryset(self):
@@ -283,6 +302,7 @@ class FormFilterView(APIView):
 
     def post(self, request, *args, **kwargs):
         return Response(self.get_queryset())
+
 
 class ElementTypesList(APIView):
 
