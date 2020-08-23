@@ -20,7 +20,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from core.sub_form_fields import get_related_attrs
 
 
-class RetrieveSubFormView(RetrieveAPIView):
+class RetrieveSubFormView(RetrieveUpdateDestroyAPIView):
     """Retrieve basic sub form info with fields data"""
     serializer_class = SubFormRetrieveSerializer
     queryset = SubForm.objects.all()
