@@ -10,6 +10,20 @@ from core.serializers.FormSerializers.serializers_headers import abstract_elemen
 from core.serializers.UserProfileSerializer.user_profile_serializers import UserProfilePublicRetrieve
 
 
+def get_raw_converter_serializer(element_type):
+    """converts raw json value to native python types value"""
+
+    class _Serializer(serializers.ModelSerializer):
+        if elements.get(element_type).value_field == "values":
+            values = CharFieldSerializer(many=True)
+
+        class Meta:
+            model = elements.get(element_type)
+            fields = ['pk', model.value_field]
+
+    return _Serializer
+
+
 class CreateElementWithData(serializers.ModelSerializer):
     """Base create serializer with extra data support"""
 

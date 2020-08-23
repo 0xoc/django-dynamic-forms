@@ -122,6 +122,10 @@ class Element(models.Model):
     form = models.ForeignKey(Form, related_name="answers_%(class)s",
                              on_delete=models.CASCADE, blank=True, null=True)
 
+    @classmethod
+    def related_name_to_form(cls):
+        return "answers_%s" % str.lower(cls.__name__)
+
     def __str__(self):
         return "%s - %s" % (str(self.field), str(self.title))
 
@@ -134,7 +138,7 @@ class Input(Element):
     """ Simple Text Input """
     value = models.CharField(max_length=1024, blank=True, null=True)
     type = INPUT
-    filters = ['icontains', 'startswith', 'endswith']
+    filters = ['', 'icontains', 'startswith', 'endswith']
 
 
 class TextArea(Element):

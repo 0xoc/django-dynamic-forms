@@ -60,7 +60,7 @@ class SubFormRetrieveSerializer(serializers.ModelSerializer):
 class TemplateRetrieveSerializer(serializers.ModelSerializer):
     """Retrieve form info with filler info and detailed sub_form info"""
     sub_forms = SubFormRetrieveSerializer(many=True, read_only=True)
-    creator = UserProfilePublicRetrieve()
+    creator = UserProfilePublicRetrieve(read_only=True)
 
     class Meta:
         model = Template
@@ -132,3 +132,9 @@ class FormSimpleRetrieveSerializer(serializers.ModelSerializer):
         model = Form
         fields = ['pk', 'filler', 'fork_date', 'last_change_date',  'template',
                   'template', 'description']
+
+
+class FormFilterSerializer(serializers.Serializer):
+
+    query = serializers.JSONField(write_only=True)
+

@@ -1,5 +1,5 @@
 from rest_framework.generics import RetrieveAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView, get_object_or_404, \
-    ListAPIView, RetrieveUpdateAPIView, UpdateAPIView
+    ListAPIView, RetrieveUpdateAPIView, UpdateAPIView, GenericAPIView
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -10,9 +10,9 @@ from core.permissions import IsLoggedIn, IsSuperuser
 from core.serializers.FormSerializers.common_serializers import CharFieldSerializer
 from core.serializers.FormSerializers.create_serializers import SubFormRawCreateSerializer, FieldRawCreateSerializer, \
     TemplateRawCreateSerializer, FormCreateSerializer, get_create_serializer, get_update_serializer, \
-    get_set_value_serializer
+    get_set_value_serializer, get_raw_converter_serializer
 from core.serializers.FormSerializers.retreive_serializers import SubFormRetrieveSerializer, TemplateRetrieveSerializer, \
-    FormRetrieveSerializer, get_retrieve_serializer, FormSimpleRetrieveSerializer
+    FormRetrieveSerializer, get_retrieve_serializer, FormSimpleRetrieveSerializer, FormFilterSerializer
 from core.models import SubForm, Template, elements, Form, Field
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -219,6 +219,44 @@ class DataRUDView(RetrieveUpdateAPIView):
     """RUD data"""
     permission_classes = [IsLoggedIn, IsSuperuser]
     serializer_class = CharFieldSerializer
+
+
+class FormFilterView(GenericAPIView):
+    """FormFilterView based on the given query"""
+
+    serializer_class = FormFilterSerializer
+
+    operator_table = {
+        'and': lambda a, b: a and b,
+        'or': lambda a, b: a or b
+    }
+
+    init_table = {
+        'and': True,
+        'or': False
+    }
+
+    def parse_group(self, group, form):
+        matchType = group['matchType']
+
+        val = self.init_table[matchType]
+
+        for rule in group['rules']:
+
+            if rule['qtype'] == 'group':
+                val = self.operator_table[matchType](val, self.parse_group(rule, form))
+            else:
+                _Element = elements.get(rule['type'])
+                _Serializer = get_raw_converter_serializer(rule['type'])
+                serializer = _Serializer(data=rule)
+                serializer.is_valid(raise_exception=True)
+                _converted_value = serializer.validated_data.get(_Element.value_field)
+                print(_Element.related_name_to_form())
+
+    def post(self, request, *args, **kwargs):
+        query = request.data.get('query')
+        self.parse_group(query)
+        return Response({'detail': query})
 
 
 class ElementTypesList(APIView):
