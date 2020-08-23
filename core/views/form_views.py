@@ -264,7 +264,7 @@ class FormFilterView(APIView):
                 # to insure that the retrieved element answer corresponds to the queried element
                 _relate_filed_name_pk = "%s__answer_of__pk" % _Element.related_name_to_form()
 
-                # serializer the query element, this process converts query json to native types
+                # serialize the query element, this process converts query json to native types
                 # that can be used in object filtering
                 _Serializer = get_raw_converter_serializer(rule['type'])
                 serializer = _Serializer(data=rule)
