@@ -1,3 +1,4 @@
+from django.db.models import Q
 from rest_framework.generics import RetrieveAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView, get_object_or_404, \
     ListAPIView, RetrieveUpdateAPIView, UpdateAPIView, GenericAPIView
 from rest_framework.mixins import CreateModelMixin
@@ -227,37 +228,63 @@ class FormFilterView(GenericAPIView):
     serializer_class = FormFilterSerializer
 
     operator_table = {
-        'and': lambda a, b: a and b,
-        'or': lambda a, b: a or b
+        'and': lambda a, b: a & b,
+        'or': lambda a, b: a | b
     }
 
     init_table = {
-        'and': True,
-        'or': False
+        'and': Q(True),
+        'or': Q(False)
     }
 
-    def parse_group(self, group, form):
+    @staticmethod
+    def set_filter_on_field(field, filter_name):
+
+        if filter_name == '':
+            return field
+
+        return "%s__%s" % (field, filter_name)
+
+    def parse_group(self, group):
         matchType = group['matchType']
 
-        val = self.init_table[matchType]
+        val = Q()
 
         for rule in group['rules']:
 
             if rule['qtype'] == 'group':
-                val = self.operator_table[matchType](val, self.parse_group(rule, form))
+                val = self.operator_table[matchType](val, self.parse_group(rule))
             else:
                 _Element = elements.get(rule['type'])
+                _related_field_name_value = "%s__value" % _Element.related_name_to_form()
+                _relate_filed_name_pk = "%s__answer_of__pk" % _Element.related_name_to_form()
+
                 _Serializer = get_raw_converter_serializer(rule['type'])
                 serializer = _Serializer(data=rule)
                 serializer.is_valid(raise_exception=True)
                 _converted_value = serializer.validated_data.get(_Element.value_field)
-                print(_Element.related_name_to_form())
+
+                _match_filter = {
+                    self.set_filter_on_field(_related_field_name_value,
+                                             rule['filter']): _converted_value,
+                }
+                _pk_filter = {
+                    _relate_filed_name_pk: rule['pk']
+                }
+                val = self.operator_table[matchType](val, Q(**_match_filter) & Q(**_pk_filter))
+
+        return val
+
+    def get_queryset(self):
+        query = self.request.data.get('query')
+        _q = self.parse_group(query)
+        _forms = Form.objects.filter(_q)
+        _forms_data = FormRetrieveSerializer(instance=_forms, many=True).data
+        return _forms_data
 
     def post(self, request, *args, **kwargs):
-        query = request.data.get('query')
-        self.parse_group(query)
-        return Response({'detail': query})
 
+        return Response(self.get_queryset())
 
 class ElementTypesList(APIView):
 

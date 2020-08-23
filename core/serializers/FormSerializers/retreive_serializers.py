@@ -16,13 +16,18 @@ def get_retrieve_serializer(element_type):
 
     class _RetrieveSerializer(serializers.ModelSerializer):
         data = DataSerializer(many=True)
+        filters = serializers.SerializerMethodField()
 
         if elements.get(element_type).value_field == "values":
             values = CharFieldSerializer(many=True)
 
         class Meta:
             model = elements.get(element_type)
-            fields = abstract_element_fields + [elements.get(element_type).value_field, ]
+            fields = abstract_element_fields + [elements.get(element_type).value_field, 'filters']
+
+        @staticmethod
+        def get_filters(instance):
+            return instance.filters
 
     return _RetrieveSerializer
 
