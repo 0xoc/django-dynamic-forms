@@ -232,11 +232,6 @@ class FormFilterView(APIView):
         'or': lambda a, b: a | b
     }
 
-    init_table = {
-        'and': Q(True),
-        'or': Q(False)
-    }
-
     @staticmethod
     def set_filter_on_field(field, filter_name):
 
@@ -255,7 +250,11 @@ class FormFilterView(APIView):
             if rule['qtype'] == 'group':
                 val = self.operator_table[matchType](val, self.parse_group(rule))
             else:
+
+                # get element model
                 _Element = elements.get(rule['type'])
+
+                # if element has a single value
                 _related_field_name_value = "%s__value" % _Element.related_name_to_form()
                 _relate_filed_name_pk = "%s__answer_of__pk" % _Element.related_name_to_form()
 

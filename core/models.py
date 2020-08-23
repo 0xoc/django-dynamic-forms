@@ -122,6 +122,19 @@ class Element(models.Model):
     form = models.ForeignKey(Form, related_name="answers_%(class)s",
                              on_delete=models.CASCADE, blank=True, null=True)
 
+    quantitative_filters = [{"value": '', "display": "مساوی"},
+                           {"value": 'gt', "display": "بزرگتر"},
+                           {"value": 'lt', "display": "کوچکتر"},
+                           {"value": 'gte', "display": "بزرگتر مساوی"},
+                           {"value": 'lte', "display": "کوچکتر مساوی"}
+                           ]
+    literal_filters = [
+        {"value": "", "display": "مساوی"},
+        {"value": 'icontains ', "display": "دربر دارد"},
+        {"value": 'startswith', "display": "شروع میشود با"},
+        {"value": 'endswith', "display": "پایان میابد با"}
+    ]
+
     @classmethod
     def related_name_to_form(cls):
         return "answers_%s" % str.lower(cls.__name__)
@@ -138,14 +151,14 @@ class Input(Element):
     """ Simple Text Input """
     value = models.CharField(max_length=1024, blank=True, null=True)
     type = INPUT
-    filters = ['', 'icontains', 'startswith', 'endswith']
+    filters = Element.literal_filters
 
 
 class TextArea(Element):
     """ Simple Text Input """
     value = models.CharField(max_length=10240, blank=True, null=True)
     type = TEXTAREA
-    filters = ['icontains', 'startswith', 'endswith']
+    filters = Element.literal_filters
 
 
 class DateTimeElement(Element):
@@ -153,7 +166,7 @@ class DateTimeElement(Element):
 
     value = models.DateTimeField(blank=True, null=True)
     type = DATETIME
-    filters = ['', 'gt', 'lt', 'gte', 'lte']
+    filters = Element.quantitative_filters
 
 
 class SelectElement(Element):
@@ -161,7 +174,7 @@ class SelectElement(Element):
 
     value = models.CharField(max_length=1024, blank=True, null=True)
     type = SELECT
-    filters = ['', ]  # empty filter string means exact match
+    filters = [{"value": '', "display": 'مساوی'}, ]  # empty filter string means exact match
 
 
 class RadioElement(Element):
@@ -169,7 +182,7 @@ class RadioElement(Element):
 
     value = models.CharField(max_length=1024, blank=True, null=True)
     type = RADIO
-    filters = ['', ]  # empty filter string means exact match
+    filters = [{"value": '', "display": 'مساوی'}, ]  # empty filter string means exact match
 
 
 class CharField(models.Model):
@@ -182,7 +195,7 @@ class CheckboxElement(Element):
 
     values = models.ManyToManyField(CharField, blank=True)
     type = CHECKBOX
-    filters = ['', ]  # empty filter string means exact match
+    filters = [{"value": 'value__in', "display": 'شامل'}, ]  # empty filter string means exact match
     value_field = 'values'
 
 
@@ -191,7 +204,7 @@ class DateElement(Element):
 
     value = models.DateField(blank=True, null=True)
     type = DATE
-    filters = ['', 'gt', 'lt', 'gte', 'lte']  # empty filter string means exact match
+    filters = Element.quantitative_filters
 
 
 class TimeElement(Element):
@@ -199,7 +212,7 @@ class TimeElement(Element):
 
     value = models.TimeField(blank=True, null=True)
     type = TIME
-    filters = ['', 'gt', 'lt', 'gte', 'lte']  # empty filter string means exact match
+    filters = Element.quantitative_filters
 
 
 class IntegerField(Element):
@@ -207,7 +220,7 @@ class IntegerField(Element):
 
     value = models.IntegerField(blank=True, null=True)
     type = INT
-    filters = ['', 'gt', 'lt', 'gte', 'lte']  # empty filter string means exact match
+    filters = Element.quantitative_filters
 
 
 class FloatField(Element):
@@ -215,7 +228,7 @@ class FloatField(Element):
 
     value = models.FloatField(blank=True, null=True)
     type = FLOAT
-    filters = ['', 'gt', 'lt', 'gte', 'lte']  # empty filter string means exact match
+    filters = Element.quantitative_filters
 
 
 class Data(models.Model):
