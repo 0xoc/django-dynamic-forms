@@ -141,7 +141,8 @@ class Element(models.Model):
 
     @property
     def display_title(self):
-        return "%s -> %s -> %s" % (self.field.sub_form.title, self.field.title, self.title)
+        return "%s -> %s -> %s" % (self.field.sub_form.title ? self.field.sub_form.title : "", 
+        self.field.title ? self.field.title : " ", self.title ? self.title : "")
 
     def __str__(self):
         return "%s - %s" % (str(self.field), str(self.title))
