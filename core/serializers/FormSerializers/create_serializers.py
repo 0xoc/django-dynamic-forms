@@ -86,9 +86,43 @@ def get_create_serializer(element_type):
 
 def get_update_serializer(element_type):
     class UpdateSerializer(serializers.ModelSerializer):
+        data = DataSerializer(many=True)
+
+        if elements.get(element_type).value_field == "values":
+            values = CharFieldSerializer(many=True)
+
         class Meta:
             model = elements.get(element_type)
-            fields = abstract_element_fields + [model.value_field, ]
+            fields = abstract_element_fields + [model.value_field, 'data', ]
+
+        def update(self, instance, validated_data):
+            _data = validated_data.pop('data', [])
+            _values = validated_data.pop('values', [])
+
+            with transaction.atomic():
+                # delete all data
+                for __data in instance.data.all():
+                    __data.delete()
+
+                # add new data
+                for __data in _data:
+                    ___data = Data.objects.create(**__data)
+                    instance.data.add(___data)
+
+                if self.Meta.model.value_field == "values":
+                    # delete all values
+                    for _value in instance.values.all():
+                        _value.delete()
+
+                    # add values
+                    for _value in _values:
+                        __value = CharField.objects.create(**_value)
+                        instance.values.add(__value)
+
+            self.Meta.model.objects.filter(pk=instance.pk).update(**validated_data)
+            instance.refresh_from_db()
+
+            return instance
 
     return UpdateSerializer
 
