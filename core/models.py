@@ -159,6 +159,13 @@ class Input(Element):
     filters = Element.literal_filters
 
 
+class Boolean(Element):
+    """ Simple Text Input """
+    value = models.BooleanField(blank=True, null=True)
+    type = BOOLEAN
+    filters = ['']
+
+
 class TextArea(Element):
     """ Simple Text Input """
     value = models.CharField(max_length=10240, blank=True, null=True)
@@ -252,5 +259,6 @@ elements = {
     SELECT: SelectElement,
     INT: IntegerField,
     TEXTAREA: TextArea,
-    FLOAT: FloatField
+    FLOAT: FloatField,
+    BOOLEAN: Boolean
 }
