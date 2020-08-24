@@ -68,7 +68,7 @@ def get_create_serializer(element_type):
             # create values objects
 
             if elements.get(element_type).value_field == "values":
-                values = validated_data.pop('values', None)
+                values = validated_data.pop('values', [])
                 obj = super(_CreateSerializer, self).create(validated_data)
 
                 # create values
