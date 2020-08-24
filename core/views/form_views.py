@@ -42,6 +42,24 @@ class TemplateRetrieveView(RetrieveUpdateDestroyAPIView):
     lookup_url_kwarg = 'template_id'
 
 
+class TemplateElementListView(APIView):
+    """RUD template"""
+    permission_classes = [IsLoggedIn, ]
+
+    def get(self, request, *args, **kwargs):
+        elements_data = []
+        template = get_object_or_404(Template, pk=self.kwargs.get('template_id'))
+
+        for sub_form in template.sub_forms.all():
+            for field in sub_form.fields.all():
+                for element in get_related_attrs(field):
+                    _Serializer = get_retrieve_serializer(element.type)
+                    el_data = _Serializer(instance=element).data
+                    elements_data.append(el_data)
+
+        return Response(elements_data)
+
+
 class FormRetrieveView(RetrieveUpdateDestroyAPIView):
     """RUD Form"""
     permission_classes = [IsLoggedIn, ]
