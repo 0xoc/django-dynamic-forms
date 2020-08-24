@@ -57,7 +57,7 @@ def get_create_serializer(element_type):
 
         # use char field serializer if multiple values are possible for the given element
         if elements.get(element_type).value_field == "values":
-            values = CharFieldSerializer(many=True)
+            values = CharFieldSerializer(many=True, required=False)
 
         class Meta:
             model = elements.get(element_type)
