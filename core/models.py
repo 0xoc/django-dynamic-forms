@@ -24,7 +24,7 @@ class Template(models.Model):
     """Base template for a form that can be filled later"""
     creator = models.ForeignKey(UserProfile, related_name="templates",
                                 on_delete=models.CASCADE)
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, default="")
 
     @property
     def forms_count(self):
