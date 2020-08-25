@@ -170,7 +170,7 @@ class Boolean(Element):
     """ Simple Text Input """
     value = models.BooleanField(blank=True, null=True)
     type = BOOLEAN
-    filters = ['']
+    filters = [ {"value": "", "display": "مساوی"} ]
 
 
 class TextArea(Element):
