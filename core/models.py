@@ -139,10 +139,13 @@ class Element(models.Model):
     def related_name_to_form(cls):
         return "answers_%s" % str.lower(cls.__name__)
 
+    def short_str(self, data):
+        data[:45] + (data[45:] and '..')
+
     @property
     def display_title(self):
-        return "%s -> %s -> %s" % (self.field.sub_form.title if self.field.sub_form.title else "", 
-        self.field.title if self.field.title else " ", self.title if self.title else "")
+        return "%s -> %s -> %s" % (self.short_str(self.field.sub_form.title) if self.field.sub_form.title else "", 
+        self.short_str(self.field.title) if self.field.title else " ", self.short_str(self.title) if self.title else "")
 
     @property
     def uid(self):
