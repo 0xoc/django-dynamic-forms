@@ -94,7 +94,7 @@ class FormRetrieveSerializer(serializers.ModelSerializer):
         sub_forms_data = []
 
         template = instance.template
-        sub_forms = template.sub_forms.all().order_by('order')
+        sub_forms = template.sub_forms.all().order_by('-order')
 
         for sub_form in sub_forms:
             data = SubFormRetrieveSerializer(instance=sub_form).data
@@ -102,7 +102,7 @@ class FormRetrieveSerializer(serializers.ModelSerializer):
             # data['fields']
             data['fields'] = []
 
-            for field in sub_form.fields.all().order_by('order'):
+            for field in sub_form.fields.all().order_by('-order'):
                 base_field_data = FieldRetrieveSerializer(instance=field).data
                 base_field_data['elements'] = []
 
