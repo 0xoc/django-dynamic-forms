@@ -144,6 +144,10 @@ class Element(models.Model):
         return "%s -> %s -> %s" % (self.field.sub_form.title if self.field.sub_form.title else "", 
         self.field.title if self.field.title else " ", self.title if self.title else "")
 
+    @property
+    def uid(self):
+        return str(self.type) + str(self.pk)
+    
     def __str__(self):
         return "%s - %s" % (str(self.field), str(self.title))
 
