@@ -23,7 +23,7 @@ def get_retrieve_serializer(element_type):
 
         class Meta:
             model = elements.get(element_type)
-            fields = abstract_element_fields + [elements.get(element_type).value_field, 'filters', 'display_title']
+            fields = abstract_element_fields + [elements.get(element_type).value_field, 'filters', 'display_title'، 'uid']
 
         @staticmethod
         def get_filters(instance):
