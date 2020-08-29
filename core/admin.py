@@ -1,17 +1,14 @@
+import django
 from django.contrib import admin
-from .models import *
+from django.apps import apps
+import rest_framework
+models = apps.get_models()
 
-admin.site.register(Template)
-admin.site.register(SubForm)
-admin.site.register(DateTimeElement)
-admin.site.register(SelectElement)
-admin.site.register(Input)
-admin.site.register(Data)
-admin.site.register(UserProfile)
-admin.site.register(TimeElement)
-admin.site.register(DateElement)
-admin.site.register(RadioElement)
-admin.site.register(CheckboxElement)
-
-admin.site.register(Form)
+for model in models:
+    if model == rest_framework.authtoken.models.Token:
+        continue
+    try:
+        admin.site.register(model)
+    except:
+        pass
 
