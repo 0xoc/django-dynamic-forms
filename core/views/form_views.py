@@ -142,7 +142,7 @@ class ListTemplatesView(ListAPIView):
     serializer_class = TemplateRetrieveSerializer
 
     def get_queryset(self):
-        return Template.objects.filter(access_level__lte=self.request.user.user_profile.access_level)
+        return Template.objects.filter(access_level__lte=self.request.user.user_profile.access_level).order_by('-id')
 
 
 class FormsOfTemplate(ListAPIView):
