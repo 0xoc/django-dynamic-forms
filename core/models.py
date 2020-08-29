@@ -26,7 +26,7 @@ class Template(models.Model):
     """Base template for a form that can be filled later"""
     creator = models.ForeignKey(UserProfile, related_name="templates",
                                 on_delete=models.CASCADE)
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, default="")
 
     access_level = models.PositiveBigIntegerField(default=0)
 
@@ -143,10 +143,18 @@ class Element(models.Model):
     def related_name_to_form(cls):
         return "answers_%s" % str.lower(cls.__name__)
 
+    def short_str(self, data):
+        return data[:15] + (data[15:] and ' ...')
+
     @property
     def display_title(self):
-        return "%s -> %s -> %s" % (self.field.sub_form.title, self.field.title, self.title)
+        return "%s -> %s -> %s" % (self.short_str(self.field.sub_form.title) if self.field.sub_form.title else "", 
+        self.short_str(self.field.title) if self.field.title else " ", self.short_str(self.title) if self.title else "")
 
+    @property
+    def uid(self):
+        return str(self.type) + str(self.pk)
+    
     def __str__(self):
         return "%s - %s" % (str(self.field), str(self.title))
 
@@ -160,6 +168,13 @@ class Input(Element):
     value = models.CharField(max_length=1024, blank=True, null=True)
     type = INPUT
     filters = Element.literal_filters
+
+
+class Boolean(Element):
+    """ Simple Text Input """
+    value = models.BooleanField(blank=True, null=True)
+    type = BOOLEAN
+    filters = [ {"value": "", "display": "مساوی"} ]
 
 
 class TextArea(Element):
@@ -255,5 +270,6 @@ elements = {
     SELECT: SelectElement,
     INT: IntegerField,
     TEXTAREA: TextArea,
-    FLOAT: FloatField
+    FLOAT: FloatField,
+    BOOLEAN: Boolean
 }
