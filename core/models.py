@@ -148,13 +148,14 @@ class Element(models.Model):
 
     @property
     def display_title(self):
-        return "%s -> %s -> %s" % (self.short_str(self.field.sub_form.title) if self.field.sub_form.title else "", 
-        self.short_str(self.field.title) if self.field.title else " ", self.short_str(self.title) if self.title else "")
+        return "%s -> %s -> %s" % (self.short_str(self.field.sub_form.title) if self.field.sub_form.title else "",
+                                   self.short_str(self.field.title) if self.field.title else " ",
+                                   self.short_str(self.title) if self.title else "")
 
     @property
     def uid(self):
         return str(self.type) + str(self.pk)
-    
+
     def __str__(self):
         return "%s - %s" % (str(self.field), str(self.title))
 
@@ -174,7 +175,7 @@ class Boolean(Element):
     """ Simple Text Input """
     value = models.BooleanField(blank=True, null=True)
     type = BOOLEAN
-    filters = [ {"value": "", "display": "مساوی"} ]
+    filters = [{"value": "", "display": "مساوی"}]
 
 
 class TextArea(Element):
