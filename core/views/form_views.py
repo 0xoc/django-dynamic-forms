@@ -148,7 +148,7 @@ class ListTemplatesView(ListAPIView):
 
 class FormsOfTemplate(ListAPIView):
     """List All Forms from the given template"""
-    permission_classes = [IsLoggedIn, IsSuperuser]
+    permission_classes = [IsLoggedIn, ]
     serializer_class = FormSimpleRetrieveSerializer
     filter_backends = [DjangoFilterBackend, ]
 
