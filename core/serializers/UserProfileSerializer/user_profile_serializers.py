@@ -39,7 +39,7 @@ class UserProfileCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = ['pk', 'user', 'token']
+        fields = ['pk', 'user', 'token', 'access_level']
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')
@@ -61,7 +61,7 @@ class UserProfileUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = ['pk', 'user', 'token']
+        fields = ['pk', 'user', 'token', 'access_level']
 
     def update(self, instance, validated_data):
 
@@ -91,7 +91,7 @@ class UserProfilePublicRetrieve(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = ['pk', 'user', ]
+        fields = ['pk', 'user', 'access_level']
 
 
 class AuthTokenSerializer(serializers.Serializer):

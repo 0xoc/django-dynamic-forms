@@ -170,7 +170,7 @@ class TemplateRawCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Template
-        fields = ['pk', 'title']
+        fields = ['pk', 'title', 'access_level']
 
 
 class SubFormRawCreateSerializer(serializers.ModelSerializer):

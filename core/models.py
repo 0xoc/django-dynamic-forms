@@ -11,6 +11,8 @@ class UserProfile(models.Model):
     """User profile"""
     user = models.OneToOneField(User, related_name="user_profile", on_delete=models.CASCADE)
 
+    access_level = models.PositiveBigIntegerField(default=0)
+
     @property
     def token(self) -> str:
         token, created = Token.objects.get_or_create(user=self.user)
@@ -25,6 +27,8 @@ class Template(models.Model):
     creator = models.ForeignKey(UserProfile, related_name="templates",
                                 on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
+
+    access_level = models.PositiveBigIntegerField(default=0)
 
     @property
     def forms_count(self):
@@ -123,11 +127,11 @@ class Element(models.Model):
                              on_delete=models.CASCADE, blank=True, null=True)
 
     quantitative_filters = [{"value": '', "display": "مساوی"},
-                           {"value": 'gt', "display": "بزرگتر"},
-                           {"value": 'lt', "display": "کوچکتر"},
-                           {"value": 'gte', "display": "بزرگتر مساوی"},
-                           {"value": 'lte', "display": "کوچکتر مساوی"}
-                           ]
+                            {"value": 'gt', "display": "بزرگتر"},
+                            {"value": 'lt', "display": "کوچکتر"},
+                            {"value": 'gte', "display": "بزرگتر مساوی"},
+                            {"value": 'lte', "display": "کوچکتر مساوی"}
+                            ]
     literal_filters = [
         {"value": "", "display": "مساوی"},
         {"value": 'icontains ', "display": "دربر دارد"},

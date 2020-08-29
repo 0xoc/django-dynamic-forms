@@ -140,7 +140,9 @@ class ListTemplatesView(ListAPIView):
     """List All Template Forms"""
     permission_classes = [IsLoggedIn, ]
     serializer_class = TemplateRetrieveSerializer
-    queryset = Template.objects.all()
+
+    def get_queryset(self):
+        return Template.objects.filter(access_level__lte=self.user.user_profile.access_level)
 
 
 class FormsOfTemplate(ListAPIView):
