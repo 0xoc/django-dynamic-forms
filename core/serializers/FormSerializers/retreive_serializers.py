@@ -78,7 +78,7 @@ class TemplateSimpleRetrieveSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Template
-        fields = ['pk', 'creator', "title", 'forms_count']
+        fields = ['pk', 'creator', "title", 'forms_count', 'access_level']
 
 class FormRetrieveSerializer(serializers.ModelSerializer):
     """Retrieve form info with filler info and detailed sub_form info"""

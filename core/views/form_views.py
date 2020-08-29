@@ -16,7 +16,8 @@ from core.serializers.FormSerializers.create_serializers import SubFormRawCreate
     TemplateRawCreateSerializer, FormCreateSerializer, get_create_serializer, get_update_serializer, \
     get_set_value_serializer, get_raw_converter_serializer
 from core.serializers.FormSerializers.retreive_serializers import SubFormRetrieveSerializer, TemplateRetrieveSerializer, \
-    FormRetrieveSerializer, get_retrieve_serializer, FormSimpleRetrieveSerializer, FormFilterSerializer
+    FormRetrieveSerializer, get_retrieve_serializer, FormSimpleRetrieveSerializer, FormFilterSerializer, \
+    TemplateSimpleRetrieveSerializer
 from core.models import SubForm, Template, elements, Form, Field, DateElement
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -139,7 +140,7 @@ class CreateTemplateView(CreateAPIView):
 class ListTemplatesView(ListAPIView):
     """List All Template Forms"""
     permission_classes = [IsLoggedIn, ]
-    serializer_class = TemplateRetrieveSerializer
+    serializer_class = TemplateSimpleRetrieveSerializer
 
     def get_queryset(self):
         return Template.objects.filter(access_level__lte=self.request.user.user_profile.access_level).order_by('-id')
