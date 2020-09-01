@@ -2,7 +2,7 @@ from django.urls import path
 from core.views.form_views import RetrieveSubFormView, CreateRawSubForm, AddFieldToSubForm, AddElementToField, \
     ElementTypesList, TemplateRetrieveView, CreateFormFromTemplate, CreateTemplateView, ListTemplatesView, FormsIFilled, \
     FormsOfTemplate, UpdateElement, FormRetrieveView, AnswerElementOfForm, DataRUDView, AddDataView, UpdateField, \
-    FormsOfUserProfile, FormFilterView, TemplateElementListView
+    FormsOfUserProfile, FormFilterView, TemplateElementListView, FormsListView
 from core.views.user_profile_views import CreateUserProfileView, MyUserProfileInfo, UserProfileInfo, UserProfileList, \
     AuthToken
 
@@ -31,6 +31,8 @@ urlpatterns = [
     path('forms-of/<int:user_profile_id>/', FormsOfUserProfile.as_view()),
     path('forms-I-filled/list/', FormsIFilled.as_view()),
 
+    # list of all forms
+    path('forms/list/', FormsListView.as_view()),
 
     # sub-form endpoints
     path('sub-form/<int:sub_form_id>/', RetrieveSubFormView.as_view()),

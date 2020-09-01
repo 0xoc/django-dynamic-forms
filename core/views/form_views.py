@@ -173,13 +173,25 @@ class FormsOfUserProfile(ListAPIView):
 class FormsIFilled(ListAPIView):
     """List All Forms that the currently logged in user filled"""
     permission_classes = [IsLoggedIn, ]
-    serializer_class = TemplateRetrieveSerializer
+    serializer_class = FormSimpleRetrieveSerializer
     filter_backends = [DjangoFilterBackend, ]
 
-    filterset_fields = ['base_template', ]
+    filterset_fields = ['template', 'description']
 
     def get_queryset(self):
-        return Template.objects.filter(filler=self.request.user.user_profile)
+        return Form.objects.filter(filler=self.request.user.user_profile)
+
+
+class FormsListView(ListAPIView):
+    """List All Forms that the currently logged in user filled"""
+    permission_classes = [IsLoggedIn, ]
+    serializer_class = FormSimpleRetrieveSerializer
+    filter_backends = [DjangoFilterBackend, ]
+
+    filterset_fields = ['description', 'template', 'filler']
+
+    def get_queryset(self):
+        return Form.objects.filter(template__access_level__lte=self.request.user.user_profile.access_level)
 
 
 class CreateRawSubForm(CreateAPIView):
