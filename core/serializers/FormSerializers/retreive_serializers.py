@@ -23,7 +23,8 @@ def get_retrieve_serializer(element_type):
 
         class Meta:
             model = elements.get(element_type)
-            fields = abstract_element_fields + [elements.get(element_type).value_field, 'filters', 'display_title', 'uid']
+            fields = abstract_element_fields + [elements.get(element_type).value_field, 'filters', 'display_title',
+                                                'uid']
 
         @staticmethod
         def get_filters(instance):
@@ -80,6 +81,7 @@ class TemplateSimpleRetrieveSerializer(serializers.ModelSerializer):
         model = Template
         fields = ['pk', 'creator', "title", 'forms_count', 'access_level']
 
+
 class FormRetrieveSerializer(serializers.ModelSerializer):
     """Retrieve form info with filler info and detailed sub_form info"""
     sub_forms = serializers.SerializerMethodField(read_only=True)
@@ -135,11 +137,22 @@ class FormSimpleRetrieveSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Form
-        fields = ['pk', 'filler', 'fork_date', 'last_change_date',  'template',
+        fields = ['pk', 'filler', 'fork_date', 'last_change_date', 'template',
                   'template', 'description']
 
 
 class FormFilterSerializer(serializers.Serializer):
+    query = serializers.JSONField(write_only=True, required=True)
+    elements = serializers.JSONField(write_only=True, required=True)
 
-    query = serializers.JSONField(write_only=True)
+    @staticmethod
+    def validate_query(query):
+        if not query:
+            serializers.ValidationError("Empty filter query")
+        return query
 
+    @staticmethod
+    def validate_elements(element):
+        if not element:
+            serializers.ValidationError("Empty elements query")
+        return element
