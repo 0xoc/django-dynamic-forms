@@ -334,9 +334,7 @@ class FormFilterView(APIView):
         template = get_object_or_404(Template, pk=self.kwargs.get('template_id'))
         _q = self.parse_group(query)
 
-        print(_q)
-        _forms = template.forms.filter(_q)
-        print(_forms)
+        _forms = template.forms.filter(_q).distinct()
         _forms_data = FormRetrieveSerializer(instance=_forms, many=True).data
 
         _elements_data = []

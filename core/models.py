@@ -134,7 +134,7 @@ class Element(models.Model):
                             ]
     literal_filters = [
         {"value": "", "display": "مساوی"},
-        {"value": 'icontains ', "display": "دربر دارد"},
+        {"value": 'icontains', "display": "دربر دارد"},
         {"value": 'startswith', "display": "شروع میشود با"},
         {"value": 'endswith', "display": "پایان میابد با"}
     ]
