@@ -277,6 +277,9 @@ class FormFilterView(APIView):
         return "%s__%s" % (field, filter_name)
 
     def parse_group(self, group):
+        if not group:
+            return Q()
+
         matchType = group['matchType']
 
         val = Q()
@@ -328,10 +331,27 @@ class FormFilterView(APIView):
 
     def get_queryset(self):
         query = self.request.data.get('query')
+        template = get_object_or_404(Template, pk=self.kwargs.get('template_id'))
         _q = self.parse_group(query)
-        _forms = Form.objects.filter(_q)
+
+        print(_q)
+        _forms = template.forms.filter(_q)
+        print(_forms)
         _forms_data = FormRetrieveSerializer(instance=_forms, many=True).data
-        return _forms_data
+
+        _elements_data = []
+        _element_data = {}
+
+        # extract all element data
+        for _form_data in _forms_data:
+            for sub_form in _form_data.get('sub_forms'):
+                for field in sub_form.get('fields'):
+                    for element in field.get('elements'):
+                        _element_data["%s_%d" % (element.get('type'), element.get('pk'))] = \
+                            element.get(elements.get(element.get("type")).value_field)
+            _elements_data.append(_element_data)
+            _element_data = {}
+        return _elements_data
 
     def post(self, request, *args, **kwargs):
         return Response(self.get_queryset())

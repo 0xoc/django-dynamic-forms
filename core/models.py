@@ -153,6 +153,12 @@ class Element(models.Model):
                                    self.short_str(self.title) if self.title else "")
 
     @property
+    def display_title_full(self):
+        return "%s -> %s -> %s" % (self.field.sub_form.title if self.field.sub_form.title else "",
+                                   self.field.title if self.field.title else " ",
+                                   self.title if self.title else "")
+
+    @property
     def uid(self):
         return str(self.type) + str(self.pk)
 
