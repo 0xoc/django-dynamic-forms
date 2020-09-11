@@ -27,7 +27,7 @@ def get_retrieve_serializer(element_type, simple=False):
                 fields = abstract_element_fields + [elements.get(element_type).value_field, 'filters', 'display_title',
                                                 'uid', 'display_title_full']
             else:
-                abstract_element_fields + ['uid', ]
+                fields = abstract_element_fields + ['uid', ]
 
         @staticmethod
         def get_filters(instance):
@@ -90,7 +90,7 @@ class FormRetrieveSerializer(serializers.ModelSerializer):
     sub_forms = serializers.SerializerMethodField(read_only=True)
     filler = UserProfilePublicRetrieve(read_only=True)
     template = TemplateSimpleRetrieveSerializer(read_only=True)
-    
+
     class Meta:
         model = Form
         fields = ['pk', 'filler', 'fork_date', "sub_forms", 'template', 'description']
