@@ -16,7 +16,9 @@ def get_retrieve_serializer(element_type, simple=False):
 
     class _RetrieveSerializer(serializers.ModelSerializer):
         data = DataSerializer(many=True)
-        filters = serializers.SerializerMethodField()
+
+        if not simple:
+            filters = serializers.SerializerMethodField()
 
         if elements.get(element_type).value_field == "values":
             values = CharFieldSerializer(many=True)
