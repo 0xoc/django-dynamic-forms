@@ -48,6 +48,9 @@ class Form(models.Model):
     template = models.ForeignKey(Template, related_name="forms", on_delete=models.CASCADE)
     description = models.CharField(max_length=255, default="")
 
+    class Meta:
+        unique_together = ['template', 'description']
+
     def __str__(self):
         return "%s - %s" % (str(self.template), str(self.description))
 
