@@ -155,7 +155,7 @@ class FormsOfTemplate(ListAPIView):
     filterset_fields = ['filler', ]
 
     def get_queryset(self):
-        return Form.objects.filter(template__pk=self.kwargs.get('template_id'))
+        return Form.objects.filter(template__pk=self.kwargs.get('template_id')).order_by('-fork_date')
 
 
 class FormsOfUserProfile(ListAPIView):
