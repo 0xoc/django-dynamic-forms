@@ -29,7 +29,7 @@ def get_retrieve_serializer(element_type, simple=False):
                 fields = abstract_element_fields + [elements.get(element_type).value_field, 'filters', 'display_title',
                                                 'uid', 'display_title_full']
             else:
-                fields = abstract_element_fields + ['uid', ]
+                fields = abstract_element_fields + [elements.get(element_type).value_field, 'uid', ]
 
         @staticmethod
         def get_filters(instance):
