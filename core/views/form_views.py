@@ -96,6 +96,7 @@ class AnswerElementOfForm(UpdateAPIView):
         serializer.save()
         form = get_object_or_404(Form, pk=self.kwargs.get('form_id'))
         form.fork_date = timezone.now()
+        form.save()
 
     def get_object(self):
         kwargs = self.kwargs
