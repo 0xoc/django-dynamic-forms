@@ -11,7 +11,7 @@ from core.serializers.UserProfileSerializer.user_profile_serializers import User
 from core.sub_form_fields import get_related_attrs
 
 
-def get_retrieve_serializer(element_type):
+def get_retrieve_serializer(element_type, simple=False):
     """Return retrieve serializer base od element type"""
 
     class _RetrieveSerializer(serializers.ModelSerializer):
@@ -23,8 +23,11 @@ def get_retrieve_serializer(element_type):
 
         class Meta:
             model = elements.get(element_type)
-            fields = abstract_element_fields + [elements.get(element_type).value_field, 'filters', 'display_title',
+            if not simple:
+                fields = abstract_element_fields + [elements.get(element_type).value_field, 'filters', 'display_title',
                                                 'uid', 'display_title_full']
+            else:
+                abstract_element_fields + ['uid', ]
 
         @staticmethod
         def get_filters(instance):
@@ -112,7 +115,7 @@ class FormRetrieveSerializer(serializers.ModelSerializer):
                     if element.answer_of is not None:
                         continue
                     AnswerModel = elements.get(element.type)
-                    _serializer = get_retrieve_serializer(AnswerModel.type)
+                    _serializer = get_retrieve_serializer(AnswerModel.type, simple=True)
                     base_element_data = _serializer(instance=element).data
 
                     try:
