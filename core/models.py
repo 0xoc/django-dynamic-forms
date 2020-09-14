@@ -130,6 +130,9 @@ class Element(models.Model):
     form = models.ForeignKey(Form, related_name="answers_%(class)s",
                              on_delete=models.CASCADE, blank=True, null=True)
 
+    # indicates if element is editable
+    disabled = models.BooleanField(default=False)
+
     quantitative_filters = [{"value": '', "display": "مساوی"},
                             {"value": 'gt', "display": "بزرگتر"},
                             {"value": 'lt', "display": "کوچکتر"},

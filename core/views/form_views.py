@@ -23,7 +23,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from core.sub_form_fields import get_related_attrs
 
-
+from django.utils import timezone
 class RetrieveSubFormView(RetrieveUpdateDestroyAPIView):
     """Retrieve basic sub form info with fields data"""
     serializer_class = SubFormRetrieveSerializer
@@ -91,6 +91,12 @@ class AnswerElementOfForm(UpdateAPIView):
     def get_serializer_class(self):
         """Get serializer based on filed type"""
         return get_set_value_serializer(self.kwargs.get('element_type'))
+
+    def perform_update(self, serializer):
+        serializer.save()
+        form = get_object_or_404(Form, pk=self.kwargs.get('form_id'))
+        form.fork_date = timezone.now()
+        form.save()
 
     def get_object(self):
         kwargs = self.kwargs
@@ -191,7 +197,8 @@ class FormsListView(ListAPIView):
     filterset_fields = ['description', 'template', 'filler']
 
     def get_queryset(self):
-        return Form.objects.filter(template__access_level__lte=self.request.user.user_profile.access_level).order_by('-fork_date')
+        return Form.objects.filter(template__access_level__lte=self.request.user.user_profile.access_level).order_by(
+            '-fork_date')
 
 
 class CreateRawSubForm(CreateAPIView):
