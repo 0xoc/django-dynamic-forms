@@ -147,7 +147,7 @@ class Element(models.Model):
         return "answers_%s" % str.lower(cls.__name__)
 
     def short_str(self, data):
-        return data[:15] + (data[15:] and ' ...')
+        return data[:50] + (data[50:] and ' ...')
 
     @property
     def display_title(self):
