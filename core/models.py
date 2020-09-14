@@ -188,6 +188,7 @@ class FileInput(Element):
     """ Simple Text Input """
     value = models.FileField(blank=True, null=True)
     type = FILE_INPUT
+    filters = []
 
 
 class Boolean(Element):
