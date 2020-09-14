@@ -1,7 +1,8 @@
 from django.db import models, transaction
 from rest_framework.authtoken.models import Token
 
-from .element_types import INPUT, DATETIME, SELECT, RADIO, CHECKBOX, DATE, TIME, INT, FLOAT, TEXTAREA, BOOLEAN
+from .element_types import INPUT, DATETIME, SELECT, RADIO, CHECKBOX, DATE, TIME, INT, FLOAT, TEXTAREA, BOOLEAN, \
+    FILE_INPUT
 from django.contrib.auth.models import User
 
 from .sub_form_fields import get_related_attrs
@@ -180,6 +181,12 @@ class Input(Element):
     filters = Element.literal_filters
 
 
+class FileInput(Element):
+    """ Simple Text Input """
+    value = models.FileField()
+    type = FILE_INPUT
+
+
 class Boolean(Element):
     """ Simple Text Input """
     value = models.BooleanField(blank=True, null=True)
@@ -281,5 +288,6 @@ elements = {
     INT: IntegerField,
     TEXTAREA: TextArea,
     FLOAT: FloatField,
-    BOOLEAN: Boolean
+    BOOLEAN: Boolean,
+    FILE_INPUT: FileInput
 }

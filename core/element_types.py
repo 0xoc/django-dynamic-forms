@@ -28,6 +28,8 @@ TIME = "time"
 DATETIME = "datetime"
 TEXTAREA = "textarea"
 BOOLEAN = "Boolean"
+FILE_INPUT = "file_input"
+
 
 element_types = ((INPUT, _("Input")),
                  (SELECT, _("Select")),
@@ -39,7 +41,8 @@ element_types = ((INPUT, _("Input")),
                  (INT, _("int")),
                  (FLOAT, _("FLOAT")),
                  (TEXTAREA, _("text area")),
-                 (BOOLEAN, _("boolean"))
+                 (BOOLEAN, _("boolean")),
+                 (FILE_INPUT, _("file_input"))
                  )
 
 
