@@ -80,7 +80,7 @@ class FieldAnswerRetrieveSerializer(serializers.ModelSerializer):
                 try:
                     answer_obj = ElementModel.objects.get(answer_of=element,
                                                           form=self.context.get('form'))
-                except ElementModel.DoesNotExists:
+                except ElementModel.DoesNotExist:
                     answer_obj = element
             else:
                 answer_obj = element
