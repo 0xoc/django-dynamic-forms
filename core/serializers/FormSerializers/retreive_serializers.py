@@ -67,8 +67,7 @@ class FieldAnswerRetrieveSerializer(serializers.ModelSerializer):
         model = Field
         fields = base_field_fields
 
-    @staticmethod
-    def get_elements(instance):
+    def get_elements(self, instance):
         _elements = get_related_attrs(instance)
         _fields_data = []
 
@@ -79,7 +78,8 @@ class FieldAnswerRetrieveSerializer(serializers.ModelSerializer):
 
             if element.answer_of is None:
                 try:
-                    answer_obj = ElementModel.objects.get(answer_of=element, form=instance.field.form)
+                    answer_obj = ElementModel.objects.get(answer_of=element,
+                                                          form=self.context.get('form'))
                 except ElementModel.DoesNotExists:
                     answer_obj = element
             else:
@@ -91,13 +91,19 @@ class FieldAnswerRetrieveSerializer(serializers.ModelSerializer):
 
         return _fields_data
 
+
 class SubFormAnswerRetrieveSerializer(serializers.ModelSerializer):
     """Retrieve Sub Form data with is's inputs and input elements"""
-    fields = FieldAnswerRetrieveSerializer(many=True, read_only=True)
+    fields = serializers.SerializerMethodField('get_fields_data')
 
     class Meta:
         model = SubForm
         fields = ['pk', 'title', 'description', 'order', 'elements', 'order', 'template']
+
+    def get_fields_data(self, instance):
+        _serializer = FieldAnswerRetrieveSerializer(many=True, read_only=True,
+                                                    context={"form": self.context.get('form')})
+        return _serializer.data
 
 
 class FieldSimpleRetrieveSerializer(serializers.ModelSerializer):
@@ -142,7 +148,8 @@ class TemplateSimpleRetrieveSerializer(serializers.ModelSerializer):
 
 class FormRetrieveSerializer(serializers.ModelSerializer):
     """Retrieve form info with filler info and detailed sub_form info"""
-    # sub_forms = SubFormAnswerRetrieveSerializer(read_only=True, many=True)
+    sub_forms = serializers.SerializerMethodField()
+
     filler = UserProfilePublicRetrieve(read_only=True)
     template = TemplateSimpleRetrieveSerializer(read_only=True)
 
@@ -150,6 +157,10 @@ class FormRetrieveSerializer(serializers.ModelSerializer):
         model = Form
         fields = ['pk', 'filler', 'fork_date', "sub_forms", 'template', 'description']
 
+    @staticmethod
+    def get_sub_forms(instance):
+        _serializers = SubFormAnswerRetrieveSerializer(read_only=True, many=True, context={"form": instance})
+        return _serializers.data
     # @staticmethod
     # def get_sub_forms(instance):
     #     sub_forms_data = []
