@@ -98,7 +98,7 @@ class SubFormAnswerRetrieveSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SubForm
-        fields = ['pk', 'title', 'description', 'order', 'elements', 'order', 'template', 'fields']
+        fields = ['pk', 'title', 'description', 'order', 'order', 'template', 'fields']
 
     def get_fields_data(self, instance):
         _serializer = FieldAnswerRetrieveSerializer(many=True, read_only=True,
