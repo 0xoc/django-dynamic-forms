@@ -93,11 +93,11 @@ class FieldAnswerRetrieveSerializer(serializers.ModelSerializer):
 
 class SubFormAnswerRetrieveSerializer(serializers.ModelSerializer):
     """Retrieve Sub Form data with is's inputs and input elements"""
-    # fields = FieldAnswerRetrieveSerializer(many=True, read_only=True)
+    fields = FieldAnswerRetrieveSerializer(many=True, read_only=True)
 
     class Meta:
         model = SubForm
-        fields = ['pk', 'title', 'description', 'order', 'fields', 'order', 'template']
+        fields = ['pk', 'title', 'description', 'order', 'elements', 'order', 'template']
 
 
 class FieldSimpleRetrieveSerializer(serializers.ModelSerializer):
@@ -142,7 +142,7 @@ class TemplateSimpleRetrieveSerializer(serializers.ModelSerializer):
 
 class FormRetrieveSerializer(serializers.ModelSerializer):
     """Retrieve form info with filler info and detailed sub_form info"""
-    sub_forms = SubFormAnswerRetrieveSerializer(read_only=True, many=True)
+    # sub_forms = SubFormAnswerRetrieveSerializer(read_only=True, many=True)
     filler = UserProfilePublicRetrieve(read_only=True)
     template = TemplateSimpleRetrieveSerializer(read_only=True)
 
