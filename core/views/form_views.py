@@ -341,7 +341,7 @@ class FormFilterView(APIView):
         template = get_object_or_404(Template, pk=self.kwargs.get('template_id'))
         _q = self.parse_group(query)
         _forms = template.forms.filter(_q).distinct()
-        print("forms ", _forms)
+        print("forms start",)
 
         _forms_data = FormRetrieveSerializer(instance=_forms, many=True).data
         print("Heavy load on serialization")
