@@ -73,8 +73,19 @@ class FieldAnswerRetrieveSerializer(serializers.ModelSerializer):
         _elements_data = []
 
         for _element in _elements:
-            _Serializer = get_retrieve_serializer(type(_element).type)
-            _field_data = _Serializer(instance=_element).data
+            if _element.answer_of is None:
+                # this field is not an answer
+                # fined it's answer
+
+                try:
+                    AnswerModel = elements.get(_element.type)
+                    _obj = AnswerModel.objects.get(answer_of=_element, form=self.context.get('form'))
+                except AnswerModel.DoesNotExist:
+                    _obj = _element
+            else:
+                continue
+            _Serializer = get_retrieve_serializer(type(_obj).type)
+            _field_data = _Serializer(instance=_obj).data
             _elements_data.append(_field_data)
 
         return _elements_data
