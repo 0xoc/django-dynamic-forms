@@ -74,7 +74,7 @@ class FieldAnswerRetrieveSerializer(serializers.ModelSerializer):
         for element in _elements:
             # if element is not an answer, find it's answer if exists
             # and then, serialize that
-            ElementModel = elements.get(element.type)
+            ElementModel = elements.get(type(element).type)
 
             try:
                 answer_obj = ElementModel.objects.get(answer_of=element,
