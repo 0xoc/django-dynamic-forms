@@ -115,20 +115,20 @@ class FormRetrieveSerializer(serializers.ModelSerializer):
 
         template = instance.template
         sub_forms = template.sub_forms.all().order_by('order')
-        print("subform ordering done")
+        # print("subform ordering done")
 
         for sub_form in sub_forms:
-            data = SubFormSimpleRetrieveSerializer(instance=sub_form).data
+            data = SubFormRetrieveSerializer(instance=sub_form).data
             print("subform serialization done")
             # over ride this
             # data['fields']
             data['fields'] = []
 
             for field in sub_form.fields.all().order_by('order'):
-                print("field ordering done")
+                # print("field ordering done")
                 base_field_data = FieldSimpleRetrieveSerializer(instance=field).data
 
-                print("field serialization done")
+                # print("field serialization done")
                 base_field_data['elements'] = []
 
                 for element in get_related_attrs(field):
