@@ -76,13 +76,10 @@ class FieldAnswerRetrieveSerializer(serializers.ModelSerializer):
             # and then, serialize that
             ElementModel = elements.get(element.type)
 
-            if element.answer_of is None:
-                try:
-                    answer_obj = ElementModel.objects.get(answer_of=element,
-                                                          form=self.context.get('form'))
-                except ElementModel.DoesNotExist:
-                    answer_obj = element
-            else:
+            try:
+                answer_obj = ElementModel.objects.get(answer_of=element,
+                                                      form=self.context.get('form'))
+            except ElementModel.DoesNotExist:
                 answer_obj = element
 
             _Serializer = get_retrieve_serializer(type(element).type)
