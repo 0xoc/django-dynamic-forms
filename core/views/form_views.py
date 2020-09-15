@@ -373,7 +373,7 @@ class FormFilterView(APIView):
                             except AnswerModel.DoesNotExist:
                                 pass
 
-                        _one_element_data["%s_%d" % (_element.get('type'), _element.get('pk'))] = \
+                        _one_element_data["%s_%d" % (_element_data.get('type'), _element_data.get('pk'))] = \
                             _element_data.get(elements.get(_element.get("type")).value_field)
                         _elements_data.append(_element_data)
                         _element_data = {}
