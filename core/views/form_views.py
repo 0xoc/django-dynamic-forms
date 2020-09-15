@@ -353,7 +353,7 @@ class FormFilterView(APIView):
 
         for form in _forms:
             print("start")
-            for sub_form in form.sub_forms.all().order_by('order'):
+            for sub_form in form.template.sub_forms.all().order_by('order'):
                 for field in sub_form.fields.all().order_by('order'):
                     for _element in get_related_attrs(field):
                         _Serializer = get_retrieve_serializer(type(_element).type)
@@ -365,7 +365,7 @@ class FormFilterView(APIView):
 
                             try:
                                 AnswerModel = elements.get(_element.type)
-                                _obj = AnswerModel.objects.get(answer_of=_element, form=self.context.get('form'))
+                                _obj = AnswerModel.objects.get(answer_of=_element, form=form)
                                 _new_data = _Serializer(instance=_obj).data
 
                                 _element_data[type(_element).value_field] = _new_data[type(_element).value_field]
