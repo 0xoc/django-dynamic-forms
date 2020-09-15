@@ -344,6 +344,7 @@ class FormFilterView(APIView):
         print("forms ", _forms)
 
         _forms_data = FormRetrieveSerializer(instance=_forms, many=True).data
+        print("Heavy load on serialization")
 
         _elements_data = []
         _element_data = {}
