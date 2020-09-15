@@ -48,15 +48,15 @@ class FieldRetrieveSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_elements(instance):
-        _fields = get_related_attrs(instance)
-        _fields_data = []
+        _elements = get_related_attrs(instance)
+        _elements_data = []
 
-        for field in _fields:
-            _Serializer = get_retrieve_serializer(type(field).type)
-            _field_data = _Serializer(instance=field).data
-            _fields_data.append(_field_data)
+        for _element in _elements:
+            _Serializer = get_retrieve_serializer(type(_element).type)
+            _field_data = _Serializer(instance=_element).data
+            _elements_data.append(_field_data)
 
-        return _fields_data
+        return _elements_data
 
 
 class FieldAnswerRetrieveSerializer(serializers.ModelSerializer):
@@ -68,28 +68,16 @@ class FieldAnswerRetrieveSerializer(serializers.ModelSerializer):
         fields = base_field_fields
 
     def get_elements(self, instance):
+
         _elements = get_related_attrs(instance)
-        _fields_data = []
+        _elements_data = []
 
-        for element in _elements:
-            if element.answer_of is not None:
-                continue
+        for _element in _elements:
+            _Serializer = get_retrieve_serializer(type(_element).type)
+            _field_data = _Serializer(instance=_element).data
+            _elements_data.append(_field_data)
 
-            # if element is not an answer, find it's answer if exists
-            # and then, serialize that
-            ElementModel = elements.get(type(element).type)
-
-            try:
-                answer_obj = ElementModel.objects.get(answer_of=element,
-                                                      form=self.context.get('form'))
-            except ElementModel.DoesNotExist:
-                answer_obj = element
-
-            _Serializer = get_retrieve_serializer(type(element).type, simple=True)
-            _element_data = _Serializer(instance=answer_obj).data
-            _fields_data.append(_element_data)
-
-        return _fields_data
+        return _elements_data
 
 
 class SubFormAnswerRetrieveSerializer(serializers.ModelSerializer):
@@ -101,7 +89,7 @@ class SubFormAnswerRetrieveSerializer(serializers.ModelSerializer):
         fields = ['pk', 'title', 'description', 'order', 'order', 'template', 'fields']
 
     def get_fields_data(self, instance):
-        _serializer = FieldRetrieveSerializer(instance=instance.fields.all().order_by('order'),
+        _serializer = FieldAnswerRetrieveSerializer(instance=instance.fields.all().order_by('order'),
                                                     many=True,
                                                     context={"form": self.context.get('form')})
         return _serializer.data
