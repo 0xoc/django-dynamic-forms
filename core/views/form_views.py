@@ -340,13 +340,13 @@ class FormFilterView(APIView):
         query = self.request.data.get('query')
         template = get_object_or_404(Template, pk=self.kwargs.get('template_id'))
         _q = self.parse_group(query)
-
         _forms = template.forms.filter(_q).distinct()
         _forms_data = FormRetrieveSerializer(instance=_forms, many=True).data
 
         _elements_data = []
         _element_data = {}
 
+        return _forms_data
         # extract all element data
         for _form_data in _forms_data:
             for sub_form in _form_data.get('sub_forms'):
