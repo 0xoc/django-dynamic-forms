@@ -93,7 +93,7 @@ class FieldAnswerRetrieveSerializer(serializers.ModelSerializer):
 
 class SubFormAnswerRetrieveSerializer(serializers.ModelSerializer):
     """Retrieve Sub Form data with is's inputs and input elements"""
-    fields = FieldAnswerRetrieveSerializer(many=True, read_only=True)
+    # fields = FieldAnswerRetrieveSerializer(many=True, read_only=True)
 
     class Meta:
         model = SubForm
