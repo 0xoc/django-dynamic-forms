@@ -85,7 +85,7 @@ class FieldAnswerRetrieveSerializer(serializers.ModelSerializer):
                     _obj = AnswerModel.objects.get(answer_of=_element, form=self.context.get('form'))
                     _new_data = _Serializer(instance=_obj).data
 
-                    _elements_data[type(_element).value_field] = _new_data[type(_element).value_field]
+                    _element_data[type(_element).value_field] = _new_data[type(_element).value_field]
 
                 except AnswerModel.DoesNotExist:
                     pass
