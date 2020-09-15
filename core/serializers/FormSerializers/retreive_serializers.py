@@ -82,12 +82,22 @@ class FieldAnswerRetrieveSerializer(serializers.ModelSerializer):
                     answer_obj = ElementModel.objects.get(answer_of=element, form=instance.field.form)
                 except ElementModel.DoesNotExists:
                     answer_obj = element
+            else:
+                answer_obj = element
 
             _Serializer = get_retrieve_serializer(type(element).type)
             _element_data = _Serializer(instance=answer_obj).data
             _fields_data.append(_element_data)
 
         return _fields_data
+
+class SubFormAnswerRetrieveSerializer(serializers.ModelSerializer):
+    """Retrieve Sub Form data with is's inputs and input elements"""
+    fields = FieldAnswerRetrieveSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = SubForm
+        fields = ['pk', 'title', 'description', 'order', 'fields', 'order', 'template']
 
 
 class FieldSimpleRetrieveSerializer(serializers.ModelSerializer):
@@ -132,7 +142,7 @@ class TemplateSimpleRetrieveSerializer(serializers.ModelSerializer):
 
 class FormRetrieveSerializer(serializers.ModelSerializer):
     """Retrieve form info with filler info and detailed sub_form info"""
-    sub_forms = SubFormRetrieveSerializer(read_only=True, many=True)
+    sub_forms = SubFormAnswerRetrieveSerializer(read_only=True, many=True)
     filler = UserProfilePublicRetrieve(read_only=True)
     template = TemplateSimpleRetrieveSerializer(read_only=True)
 
