@@ -27,7 +27,7 @@ def get_retrieve_serializer(element_type, simple=False):
             model = elements.get(element_type)
             if not simple:
                 fields = abstract_element_fields + [elements.get(element_type).value_field, 'filters', 'display_title',
-                                                'uid', 'display_title_full']
+                                                    'uid', 'display_title_full']
             else:
                 fields = abstract_element_fields + [elements.get(element_type).value_field, 'uid', ]
 
@@ -59,11 +59,42 @@ class FieldRetrieveSerializer(serializers.ModelSerializer):
         return _fields_data
 
 
-class FieldSimpleRetrieveSerializer(serializers.ModelSerializer):
+class FieldAnswerRetrieveSerializer(serializers.ModelSerializer):
+    """Retrieve a field with it's elements"""
+    elements = serializers.SerializerMethodField()
 
     class Meta:
         model = Field
+        fields = base_field_fields
+
+    @staticmethod
+    def get_elements(instance):
+        _elements = get_related_attrs(instance)
+        _fields_data = []
+
+        for element in _elements:
+            # if element is not an answer, find it's answer if exists
+            # and then, serialize that
+            ElementModel = elements.get(element.type)
+
+            if element.answer_of is None:
+                try:
+                    answer_obj = ElementModel.objects.get(answer_of=element, form=instance.field.form)
+                except ElementModel.DoesNotExists:
+                    answer_obj = element
+
+            _Serializer = get_retrieve_serializer(type(element).type)
+            _element_data = _Serializer(instance=answer_obj).data
+            _fields_data.append(_element_data)
+
+        return _fields_data
+
+
+class FieldSimpleRetrieveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Field
         fields = base_field_fields_simple
+
 
 class SubFormRetrieveSerializer(serializers.ModelSerializer):
     """Retrieve Sub Form data with is's inputs and input elements"""
@@ -73,8 +104,8 @@ class SubFormRetrieveSerializer(serializers.ModelSerializer):
         model = SubForm
         fields = ['pk', 'title', 'description', 'order', 'fields', 'order', 'template']
 
-class SubFormSimpleRetrieveSerializer(serializers.ModelSerializer):
 
+class SubFormSimpleRetrieveSerializer(serializers.ModelSerializer):
     class Meta:
         model = SubForm
         fields = ['pk', 'title', 'description', 'order', 'order', 'template']
