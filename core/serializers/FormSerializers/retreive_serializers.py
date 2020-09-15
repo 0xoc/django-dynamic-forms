@@ -160,7 +160,7 @@ class FormRetrieveSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_sub_forms(instance):
-        _serializers = SubFormAnswerRetrieveSerializer(instance=instance.template.sub_forms.all(), many=True, context={"form": instance})
+        _serializers = SubFormAnswerRetrieveSerializer(instance=instance.template.sub_forms.all().order_by('-order'), many=True, context={"form": instance})
         return _serializers.data
     # @staticmethod
     # def get_sub_forms(instance):
