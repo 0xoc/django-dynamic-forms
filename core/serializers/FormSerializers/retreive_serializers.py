@@ -5,7 +5,7 @@ from core.models import Input, SelectElement, DateTimeElement, SubForm, Field, C
     TimeElement, Template, IntegerField, FloatField, TextArea, elements, Form
 from core.serializers.FormSerializers.common_serializers import DataSerializer, CharFieldSerializer
 from core.serializers.FormSerializers.serializers_headers import base_fields, base_field_fields, abstract_base_fields, \
-    abstract_element_fields
+    abstract_element_fields, base_field_fields_simple
 from core.serializers.UserProfileSerializer.user_profile_serializers import UserProfileCreateSerializer, \
     UserProfilePublicRetrieve
 from core.sub_form_fields import get_related_attrs
@@ -59,6 +59,12 @@ class FieldRetrieveSerializer(serializers.ModelSerializer):
         return _fields_data
 
 
+class FieldSimpleRetrieveSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Field
+        fields = base_field_fields_simple
+
 class SubFormRetrieveSerializer(serializers.ModelSerializer):
     """Retrieve Sub Form data with is's inputs and input elements"""
     fields = FieldRetrieveSerializer(many=True, read_only=True)
@@ -66,6 +72,12 @@ class SubFormRetrieveSerializer(serializers.ModelSerializer):
     class Meta:
         model = SubForm
         fields = ['pk', 'title', 'description', 'order', 'fields', 'order', 'template']
+
+class SubFormSimpleRetrieveSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = SubForm
+        fields = ['pk', 'title', 'description', 'order', 'order', 'template']
 
 
 class TemplateRetrieveSerializer(serializers.ModelSerializer):
@@ -103,15 +115,20 @@ class FormRetrieveSerializer(serializers.ModelSerializer):
 
         template = instance.template
         sub_forms = template.sub_forms.all().order_by('order')
+        print("subform ordering done")
 
         for sub_form in sub_forms:
-            data = SubFormRetrieveSerializer(instance=sub_form).data
+            data = SubFormSimpleRetrieveSerializer(instance=sub_form).data
+            print("subform serialization done")
             # over ride this
             # data['fields']
             data['fields'] = []
 
             for field in sub_form.fields.all().order_by('order'):
-                base_field_data = FieldRetrieveSerializer(instance=field).data
+                print("field ordering done")
+                base_field_data = FieldSimpleRetrieveSerializer(instance=field).data
+
+                print("field serialization done")
                 base_field_data['elements'] = []
 
                 for element in get_related_attrs(field):
@@ -122,6 +139,8 @@ class FormRetrieveSerializer(serializers.ModelSerializer):
                     base_element_data = _serializer(instance=element).data
 
                     try:
+                        # if the element has an answer(it itself is not a raw template element)
+                        # find the answer and serialize it
                         answer = AnswerModel.objects.get(answer_of=element, form=instance)
                         answer_data = _serializer(instance=answer).data
                         base_element_data[AnswerModel.value_field] = answer_data[AnswerModel.value_field]
