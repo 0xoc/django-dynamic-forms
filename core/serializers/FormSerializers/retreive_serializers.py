@@ -101,7 +101,8 @@ class SubFormAnswerRetrieveSerializer(serializers.ModelSerializer):
         fields = ['pk', 'title', 'description', 'order', 'order', 'template', 'fields']
 
     def get_fields_data(self, instance):
-        _serializer = FieldAnswerRetrieveSerializer(instance=instance.fields.all().order_by('-order'), many=True,
+        _serializer = FieldAnswerRetrieveSerializer(instance=instance.fields.all().order_by('order'),
+                                                    many=True,
                                                     context={"form": self.context.get('form')})
         return _serializer.data
 
@@ -159,7 +160,9 @@ class FormRetrieveSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_sub_forms(instance):
-        _serializers = SubFormAnswerRetrieveSerializer(instance=instance.template.sub_forms.all().order_by('-order'), many=True, context={"form": instance})
+        _serializers = SubFormAnswerRetrieveSerializer(instance=instance.template.sub_forms.all().order_by('order'),
+                                                       many=True,
+                                                       context={"form": instance})
         return _serializers.data
     # @staticmethod
     # def get_sub_forms(instance):
