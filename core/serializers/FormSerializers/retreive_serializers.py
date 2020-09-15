@@ -101,7 +101,7 @@ class SubFormAnswerRetrieveSerializer(serializers.ModelSerializer):
         fields = ['pk', 'title', 'description', 'order', 'order', 'template', 'fields']
 
     def get_fields_data(self, instance):
-        _serializer = FieldAnswerRetrieveSerializer(many=True, instance=get_related_attrs(instance),
+        _serializer = FieldAnswerRetrieveSerializer(many=True, instance=instance.fields.all(),
                                                     context={"form": self.context.get('form')})
         return _serializer.data
 
