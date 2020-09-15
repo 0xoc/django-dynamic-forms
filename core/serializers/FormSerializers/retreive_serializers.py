@@ -102,7 +102,7 @@ class SubFormAnswerRetrieveSerializer(serializers.ModelSerializer):
 
     def get_fields_data(self, instance):
         print("all", instance.fields.all())
-        _serializer = FieldAnswerRetrieveSerializer(instance=instance.fields.all(), many=True,
+        _serializer = FieldAnswerRetrieveSerializer(instance=instance.fields.all().order_by('-order'), many=True,
                                                     context={"form": self.context.get('form')})
         return _serializer.data
 
