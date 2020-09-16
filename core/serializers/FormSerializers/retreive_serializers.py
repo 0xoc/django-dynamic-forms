@@ -169,53 +169,6 @@ class FormRetrieveSerializer(serializers.ModelSerializer):
                                                        many=True,
                                                        context={"form": instance})
         return _serializers.data
-    # @staticmethod
-    # def get_sub_forms(instance):
-    #     sub_forms_data = []
-    #
-    #     template = instance.template
-    #     sub_forms = template.sub_forms.all().order_by('order')
-    #     # print("subform ordering done")
-    #     print("start------------------>")
-    #     for sub_form in sub_forms:
-    #         data = SubFormRetrieveSerializer(instance=sub_form).data
-    #         print("subform serialization done")
-    #         # over ride this
-    #         # data['fields']
-    #         data['fields'] = []
-    #
-    #         for field in sub_form.fields.all().order_by('order'):
-    #             # print("field ordering done")
-    #             base_field_data = FieldSimpleRetrieveSerializer(instance=field).data
-    #
-    #             # print("field serialization done")
-    #             base_field_data['elements'] = []
-    #
-    #             for element in get_related_attrs(field):
-    #                 if element.answer_of is not None:
-    #                     continue
-    #                 AnswerModel = elements.get(element.type)
-    #                 _serializer = get_retrieve_serializer(AnswerModel.type, simple=True)
-    #                 base_element_data = _serializer(instance=element).data
-    #
-    #                 try:
-    #                     # if the element has an answer(it itself is not a raw template element)
-    #                     # find the answer and serialize it
-    #                     answer = AnswerModel.objects.get(answer_of=element, form=instance)
-    #                     answer_data = _serializer(instance=answer).data
-    #                     base_element_data[AnswerModel.value_field] = answer_data[AnswerModel.value_field]
-    #
-    #                     base_field_data['elements'].append(base_element_data)
-    #
-    #                 except AnswerModel.DoesNotExist:
-    #                     base_field_data['elements'].append(base_element_data)
-    #
-    #             data['fields'].append(base_field_data)
-    #         sub_forms_data.append(data)
-    #
-    #     print("<------------------end")
-    #     return sub_forms_data
-
 
 class FormSimpleRetrieveSerializer(serializers.ModelSerializer):
     """Retrieve form info with filler info and detailed sub_form info"""
