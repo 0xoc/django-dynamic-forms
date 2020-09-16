@@ -352,35 +352,22 @@ class FormFilterView(APIView):
         _one_element_data = {}
 
         for form in _forms:
-            print("start")
-            for sub_form in form.template.sub_forms.all().order_by('order'):
-                for field in sub_form.fields.all().order_by('order'):
-                    for _element in get_related_attrs(field):
-                        _Serializer = get_retrieve_serializer(type(_element).type)
-                        _element_data = _Serializer(instance=_element).data
-
-                        if _element.answer_of is None:
-                            # this field is not an answer
-                            # fined it's answer
-
-                            try:
-                                AnswerModel = elements.get(_element.type)
-                                _obj = AnswerModel.objects.get(answer_of=_element, form=form)
-                                _new_data = _Serializer(instance=_obj).data
-
-                                _element_data[type(_element).value_field] = _new_data[type(_element).value_field]
-
-                            except AnswerModel.DoesNotExist:
-                                pass
-
-                        _one_element_data["%s_%d" % (_element_data.get('type'), _element_data.get('pk'))] = \
-                            _element_data.get(elements.get(_element.get("type")).value_field)
-                        _elements_data.append(_element_data)
-                        _element_data = {}
-                        _elements_data.append(_element_data)
-            print("end")
+            for sub_form in form.sub_fomrs.all().order('order'):
+                for field in sub_form.fields.all().order('order'):
+                    for element in get_related_attrs(field):
+                        try:
+                            ElementModel = elements.get(element.type)
+                            answer = ElementModel.objects.get(answer_of=element, form=form)
+                            if answer.value_field == "value":
+                                the_value = answer.value
+                            else:
+                                the_value = answer.values
+                            _elements_data.append({'%s_%d' % (element.type, element.pk): the_value})
+                        except ElementModel.DoesNotExist:
+                            _elements_data.append({'%s_%d' % (element.type, element.pk): None})
 
         return _elements_data
+
         # extract all element data
         for _form_data in _forms_data:
             for sub_form in _form_data.get('sub_forms'):
