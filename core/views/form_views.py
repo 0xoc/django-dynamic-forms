@@ -353,11 +353,13 @@ class FormFilterView(APIView):
         i = 0
 
         for form in _forms:
+            _all_elements = []
+            for key in elements:
+                ElModel = elements.get(key)
+                _all_elements += ElModel.objects.filter(field__template=form.template)
 
-            for field in Field.objects.filter(sub_form__template=form.template):
-                _elements = get_related_attrs(field)
-                for el in _elements:
-                    _one_element_data['%s_%d' % (el.type, el.pk)] = None
+            for el in _all_elements:
+                _one_element_data['%s_%d' % (el.type, el.pk)] = None
 
             # answers = get_related_attrs(form, base_name="answers")
             # for answer in answers:
