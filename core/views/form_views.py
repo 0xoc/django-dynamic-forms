@@ -357,9 +357,7 @@ class FormFilterView(APIView):
             for answer in answers:
                 answer_data = get_retrieve_serializer(answer.type, simple=True)(instance=answer).data
 
-                _elements_data.append({
-                    '%s_%d' % (answer.type, answer.pk): answer_data[answer.value_field]
-                })
+                _one_element_data['%s_%d' % (answer.type, answer.pk)] = answer_data[answer.value_field]
             i += 1
             print("%d/%d" % (i, len(_forms)))
         return _elements_data
