@@ -352,8 +352,8 @@ class FormFilterView(APIView):
         _one_element_data = {}
 
         for form in _forms:
-            for sub_form in form.template.sub_forms.all().order('order'):
-                for field in sub_form.fields.all().order('order'):
+            for sub_form in form.template.sub_forms.all().order_by('order'):
+                for field in sub_form.fields.all().order_by('order'):
                     for element in get_related_attrs(field):
                         try:
                             ElementModel = elements.get(element.type)
