@@ -355,13 +355,10 @@ class FormFilterView(APIView):
         for form in _forms:
             answers = get_related_attrs(form, base_name="answers")
             for answer in answers:
-                if answer.value_field == "value":
-                    the_value = answer.value
-                else:
-                    the_value = answer.values.all()
+                answer_data = get_retrieve_serializer(answer.type, simple=True).data
 
                 _elements_data.append({
-                    '%s_%d' % (answer.type, answer.pk): the_value
+                    '%s_%d' % (answer.type, answer.pk): answer_data[answer.value_field]
                 })
             i += 1
             print("%d/%d" % (i, len(_forms)))
