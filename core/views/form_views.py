@@ -356,7 +356,7 @@ class FormFilterView(APIView):
             _all_elements = []
             for key in elements:
                 ElModel = elements.get(key)
-                _all_elements += ElModel.objects.filter(field__template=form.template)
+                _all_elements += ElModel.objects.filter(field__sub_form__template=form.template)
 
             for el in _all_elements:
                 _one_element_data['%s_%d' % (el.type, el.pk)] = None
