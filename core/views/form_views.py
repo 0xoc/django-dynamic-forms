@@ -355,7 +355,7 @@ class FormFilterView(APIView):
         for form in _forms:
             answers = get_related_attrs(form, base_name="answers")
             for answer in answers:
-                answer_data = get_retrieve_serializer(answer.type, simple=True).data
+                answer_data = get_retrieve_serializer(answer.type, simple=True)(instance=answer).data
 
                 _elements_data.append({
                     '%s_%d' % (answer.type, answer.pk): answer_data[answer.value_field]
