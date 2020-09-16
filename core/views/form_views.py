@@ -360,6 +360,7 @@ class FormFilterView(APIView):
                 _one_element_data['%s_%d' % (answer.type, answer.pk)] = answer_data[answer.value_field]
 
             _elements_data.append(_one_element_data)
+            _one_element_data = {}
             i += 1
             print("%d/%d" % (i, len(_forms)))
         return _elements_data
