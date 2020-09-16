@@ -351,20 +351,9 @@ class FormFilterView(APIView):
         _elements_data = []
         _one_element_data = {}
         i = 0
+
         for form in _forms:
-            for sub_form in form.template.sub_forms.all().order_by('order'):
-                for field in sub_form.fields.all().order_by('order'):
-                    for element in get_related_attrs(field):
-                        try:
-                            ElementModel = elements.get(element.type)
-                            answer = ElementModel.objects.get(answer_of=element, form=form)
-                            if answer.value_field == "value":
-                                the_value = answer.value
-                            else:
-                                the_value = answer.values
-                            _elements_data.append({'%s_%d' % (element.type, element.pk): the_value})
-                        except ElementModel.DoesNotExist:
-                            _elements_data.append({'%s_%d' % (element.type, element.pk): None})
+            answers = get_related_attrs(form, base_name="answers")
             i += 1
             print("%d/%d" % (i, len(_forms)))
         return _elements_data
