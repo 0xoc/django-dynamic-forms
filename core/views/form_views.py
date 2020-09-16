@@ -353,12 +353,18 @@ class FormFilterView(APIView):
         i = 0
 
         for form in _forms:
-            answers = get_related_attrs(form, base_name="answers")
-            for answer in answers:
-                answer_data = get_retrieve_serializer(answer.type, simple=True)(instance=answer).data
 
-                _one_element_data['%s_%d' % (answer.type, answer.answer_of.pk)] = answer_data[answer.value_field]
+            for sub_form in form.template.sub_forms.all():
+                for field in sub_form.fields.all():
+                    for el in get_related_attrs(field):
+                        _one_element_data['%s_%d' % (el.type, el.pk)] = None
 
+            # answers = get_related_attrs(form, base_name="answers")
+            # for answer in answers:
+            #     answer_data = get_retrieve_serializer(answer.type, simple=True)(instance=answer).data
+            #
+            #     _one_element_data['%s_%d' % (answer.type, answer.answer_of.pk)] = answer_data[answer.value_field]
+            #
             _elements_data.append(_one_element_data)
             _one_element_data = {}
             i += 1
