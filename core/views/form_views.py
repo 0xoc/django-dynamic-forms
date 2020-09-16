@@ -343,45 +343,16 @@ class FormFilterView(APIView):
         template = get_object_or_404(Template, pk=self.kwargs.get('template_id'))
         _q = self.parse_group(query)
         _forms = template.forms.filter(_q).distinct()
-        # print("forms start",)
-        #
-        # _forms_data = FormRetrieveSerializer(instance=_forms, many=True).data
-        # print("Heavy load on serialization")
-
         _elements_data = []
         _one_element_data = {}
-        i = 0
 
         for form in _forms:
-            # _all_elements = []
-            # for key in elements:
-            #     ElModel = elements.get(key)
-            #     _all_elements += ElModel.objects.filter(field__sub_form__template=form.template)
-            #
-            # for el in _all_elements:
-            #     _one_element_data['%s_%d' % (el.type, el.pk)] = None
-
             answers = get_related_attrs(form, base_name="answers")
             for answer in answers:
                 answer_data = get_retrieve_serializer(answer.type, simple=True)(instance=answer).data
-
                 _one_element_data['%s_%d' % (answer.type, answer.answer_of.pk)] = answer_data[answer.value_field]
-
             _elements_data.append(_one_element_data)
             _one_element_data = {}
-            i += 1
-            print("%d/%d" % (i, len(_forms)))
-        return _elements_data
-
-        # extract all element data
-        for _form_data in _forms_data:
-            for sub_form in _form_data.get('sub_forms'):
-                for field in sub_form.get('fields'):
-                    for element in field.get('elements'):
-                        _element_data["%s_%d" % (element.get('type'), element.get('pk'))] = \
-                            element.get(elements.get(element.get("type")).value_field)
-            _elements_data.append(_element_data)
-            _element_data = {}
         return _elements_data
 
     def post(self, request, *args, **kwargs):
