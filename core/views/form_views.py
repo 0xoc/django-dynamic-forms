@@ -411,9 +411,9 @@ class SetFieldOrders(UpdateAPIView):
         fields_data = serializer.validated_data.get('fields_data')
 
         # set all orders
-        for element_data in fields_data:
-            element_data.get('field').order = element_data.get('order')
-            element_data.get('field').save()
+        for field_data in fields_data:
+            field_data.get('field').order = field_data.get('order')
+            field_data.get('field').save()
 
         return Response({'detail': "set"})
 
