@@ -53,24 +53,24 @@ class ElementsSetOrder(serializers.Serializer):
 
             # syntax check the incoming element data
             _element_checks = self.check_attr(element_data, ["type", "pk", "order"])
-            if not _element_checks:
+            if _element_checks:
                 raise serializers.ValidationError(_element_checks)
 
             # get the element model
             ElementModel = elements.get(element_data.get('type'))
             if not ElementModel:
-                raise serializers.ValidationError("Element with type %s does not exist")
+                raise serializers.ValidationError("Element with type %s does not exist" % element_data.get('type'))
 
             # validate element pk
             try:
                 el_pk = int(element_data.get('pk'))
-            except ValueError:
+            except (TypeError, ValueError):
                 raise serializers.ValidationError("pk " + element_data.get('pk') + " is not a valid integer")
 
             # validate order
             try:
                 el_order = int(element_data.get('order'))
-            except ValueError:
+            except (TypeError, ValueError):
                 raise serializers.ValidationError("order " + element_data.get('order') + " is not a valid integer")
 
             try:
