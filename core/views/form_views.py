@@ -11,7 +11,7 @@ from rest_framework.views import APIView
 
 from core.element_types import element_types
 from core.permissions import IsLoggedIn, IsSuperuser
-from core.serializers.FormSerializers.common_serializers import CharFieldSerializer, ElementsSetOrder
+from core.serializers.FormSerializers.common_serializers import CharFieldSerializer, ElementsSetOrder, FieldsSetOrder
 from core.serializers.FormSerializers.create_serializers import SubFormRawCreateSerializer, FieldRawCreateSerializer, \
     TemplateRawCreateSerializer, FormCreateSerializer, get_create_serializer, get_update_serializer, \
     get_set_value_serializer, get_raw_converter_serializer
@@ -385,6 +385,35 @@ class SetElementOrders(UpdateAPIView):
         for element_data in elements_data:
             element_data.get('element').order = element_data.get('order')
             element_data.get('element').save()
+
+        return Response({'detail': "set"})
+
+
+class SetFieldOrders(UpdateAPIView):
+    """
+        Receives a json array of elements and sets their orders
+
+        structure of the elements_data
+
+        elements_data = {
+        "pk":
+        "order":
+        }
+
+        """
+
+    serializer_class = FieldsSetOrder
+
+    def update(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        fields_data = serializer.validated_data.get('fields_data')
+
+        # set all orders
+        for element_data in fields_data:
+            element_data.get('field').order = element_data.get('order')
+            element_data.get('field').save()
 
         return Response({'detail': "set"})
 

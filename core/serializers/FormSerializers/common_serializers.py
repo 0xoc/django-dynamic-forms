@@ -2,7 +2,7 @@ import json
 
 from rest_framework import serializers
 
-from core.models import Data, CharField, elements
+from core.models import Data, CharField, elements, Field
 
 
 class DataSerializer(serializers.ModelSerializer):
@@ -75,7 +75,7 @@ class ElementsSetOrder(serializers.Serializer):
 
             try:
                 _element_obj = ElementModel.objects.get(pk=el_pk)
-                _elements.append({'element': _element_obj, 'order': el_order})
+                _elements.append({'field': _element_obj, 'order': el_order})
 
             except ElementModel.DoesNotExsit:
                 raise serializers.ValidationError(
@@ -83,3 +83,61 @@ class ElementsSetOrder(serializers.Serializer):
                                                                        element_data.get('pk')))
 
         return _elements
+
+
+class FieldsSetOrder(serializers.Serializer):
+    """
+    Receives a json array of fields and sets their orders
+
+    structure of the elements_data
+
+    fields_data = {
+    "pk":
+    "order":
+    }
+
+    """
+    fields_data = serializers.JSONField()
+
+    @staticmethod
+    def check_attr(json_data, attrs):
+        syntax_errors = []
+
+        for attr in attrs:
+            if json_data.get(attr, None) == None:
+                _error = "missing %s attr on \n %s" % (attr, json.dumps(json_data))
+                syntax_errors.append(_error)
+        return syntax_errors
+
+    def validate_elements_data(self, fields_data):
+        _fields = []
+        # syntax check element data
+        for field_data in fields_data:
+
+            # syntax check the incoming element data
+            _field_checks = self.check_attr(field_data, ["pk", "order"])
+
+            if _field_checks:
+                raise serializers.ValidationError(_field_checks)
+
+            # validate element pk
+            try:
+                el_pk = int(field_data.get('pk'))
+            except (TypeError, ValueError):
+                raise serializers.ValidationError("pk " + field_data.get('pk') + " is not a valid integer")
+
+            # validate order
+            try:
+                el_order = int(field_data.get('order'))
+            except (TypeError, ValueError):
+                raise serializers.ValidationError("order " + field_data.get('order') + " is not a valid integer")
+
+            try:
+                _element_obj = Field.objects.get(pk=el_pk)
+                _fields.append({'element': _element_obj, 'order': el_order})
+
+            except Field.DoesNotExsit:
+                raise serializers.ValidationError(
+                    "Field with pk %d does not exist" % (field_data.get('pk')))
+
+        return _fields
