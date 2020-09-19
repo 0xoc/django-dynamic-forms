@@ -384,7 +384,7 @@ class SetElementOrders(UpdateAPIView):
         # set all orders
         for element_data in elements_data:
             element_data.get('element').order = element_data.get('order')
-            element_data.save()
+            element_data.get('element').save()
 
         return Response({'detail': "set"})
 
