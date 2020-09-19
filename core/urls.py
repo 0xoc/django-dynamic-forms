@@ -2,7 +2,7 @@ from django.urls import path
 from core.views.form_views import RetrieveSubFormView, CreateRawSubForm, AddFieldToSubForm, AddElementToField, \
     ElementTypesList, TemplateRetrieveView, CreateFormFromTemplate, CreateTemplateView, ListTemplatesView, FormsIFilled, \
     FormsOfTemplate, UpdateElement, FormRetrieveView, AnswerElementOfForm, DataRUDView, AddDataView, UpdateField, \
-    FormsOfUserProfile, FormFilterView, TemplateElementListView, FormsListView, SetElementOrders
+    FormsOfUserProfile, FormFilterView, TemplateElementListView, FormsListView, SetElementOrders, SetFieldOrders
 from core.views.user_profile_views import CreateUserProfileView, MyUserProfileInfo, UserProfileInfo, UserProfileList, \
     AuthToken
 
@@ -48,6 +48,9 @@ urlpatterns = [
     path('data/<int:data_id>/', DataRUDView.as_view()),
     path('element-types/list/', ElementTypesList.as_view()),
 
-    path('set-element-orders/', SetElementOrders.as_view())
+    path('set-element-orders/', SetElementOrders.as_view()),
+    path('set-field-orders/', SetFieldOrders.as_view()),
+
+
 
 ]
