@@ -109,7 +109,7 @@ class FieldsSetOrder(serializers.Serializer):
                 syntax_errors.append(_error)
         return syntax_errors
 
-    def validate_elements_data(self, fields_data):
+    def validate_fields_data(self, fields_data):
         _fields = []
         # syntax check element data
         for field_data in fields_data:
@@ -139,5 +139,4 @@ class FieldsSetOrder(serializers.Serializer):
             except Field.DoesNotExsit:
                 raise serializers.ValidationError(
                     "Field with pk %d does not exist" % (field_data.get('pk')))
-
         return _fields
