@@ -41,7 +41,7 @@ class ElementsSetOrder(serializers.Serializer):
         syntax_errors = []
 
         for attr in attrs:
-            if not json_data.get(attr):
+            if json_data.get(attr, None) == None:
                 _error = "missing %s attr on \n %s" % (attr, json.dumps(json_data))
                 syntax_errors.append(_error)
         return syntax_errors
