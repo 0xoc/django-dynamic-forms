@@ -134,7 +134,7 @@ class FieldsSetOrder(serializers.Serializer):
 
             try:
                 _element_obj = Field.objects.get(pk=el_pk)
-                _fields.append({'element': _element_obj, 'order': el_order})
+                _fields.append({'field': _element_obj, 'order': el_order})
 
             except Field.DoesNotExsit:
                 raise serializers.ValidationError(
