@@ -75,7 +75,7 @@ class ElementsSetOrder(serializers.Serializer):
 
             try:
                 _element_obj = ElementModel.objects.get(pk=el_pk)
-                _elements.append({'field': _element_obj, 'order': el_order})
+                _elements.append({'element': _element_obj, 'order': el_order})
 
             except ElementModel.DoesNotExsit:
                 raise serializers.ValidationError(
