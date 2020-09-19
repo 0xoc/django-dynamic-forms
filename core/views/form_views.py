@@ -409,7 +409,7 @@ class SetFieldOrders(UpdateAPIView):
         serializer.is_valid(raise_exception=True)
 
         fields_data = serializer.validated_data.get('fields_data')
-
+        print(fields_data)
         # set all orders
         for field_data in fields_data:
             field_data.get('field').order = field_data.get('order')
