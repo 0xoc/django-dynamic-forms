@@ -369,14 +369,15 @@ class FormFilterView(APIView):
 
             for answer in answers:
 
-                # todo: only serialize the answer object if it's requested
-                answer_data = get_retrieve_serializer(answer.type, simple=True)(instance=answer).data
-                _one_form_element_data['%s_%d' % (answer.type,
-                                                  answer.answer_of.pk)] = \
-                    answer_data[answer.value_field]
+                # only serialize the answer object if it's requested
+                if answer.answer_of in _elements:
+                    answer_data = get_retrieve_serializer(answer.type, simple=True)(instance=answer).data
+                    _one_form_element_data['%s_%d' % (answer.type,
+                                                      answer.answer_of.pk)] = \
+                        answer_data[answer.value_field]
 
             # include the form description
-            # _one_form_element_data['description'] = form.description
+            _one_form_element_data['description'] = form.description
 
             _elements_data.append(_one_form_element_data)
             _one_form_element_data = {}
