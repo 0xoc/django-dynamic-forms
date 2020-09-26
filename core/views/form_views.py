@@ -339,20 +339,48 @@ class FormFilterView(APIView):
         return val
 
     def get_queryset(self):
-        query = self.request.data.get('query')
+        # serialize request data
+        serializer = self.serializer_class(data=self.request.data)
+        serializer.is_valid(raise_exception=True)
+
+        # get request attrs
+        query = serializer.validated_data.get('query')
+        _elements = serializer.validated_data.get('elements')
+
+        # get the base template
         template = get_object_or_404(Template, pk=self.kwargs.get('template_id'))
+
+        # generate a Q expression from the given query rules
         _q = self.parse_group(query)
+
+        # get all the forms that match the given rules
         _forms = template.forms.filter(_q).distinct()
+
+        # data of the individual elements of the filtered forms
         _elements_data = []
-        _one_element_data = {}
+
+        # element data of a specific form (temp)
+        _one_form_element_data = {}
 
         for form in _forms:
+
+            # get all form answers
             answers = get_related_attrs(form, base_name="answers")
+
             for answer in answers:
-                answer_data = get_retrieve_serializer(answer.type, simple=True)(instance=answer).data
-                _one_element_data['%s_%d' % (answer.type, answer.answer_of.pk)] = answer_data[answer.value_field]
-            _elements_data.append(_one_element_data)
-            _one_element_data = {}
+
+                # only serialize the answer object if it's requested
+                if answer.answer_of in _elements:
+                    answer_data = get_retrieve_serializer(answer.type, simple=True)(instance=answer).data
+                    _one_form_element_data['%s_%d' % (answer.type,
+                                                      answer.answer_of.pk)] = \
+                        answer_data[answer.value_field]
+
+            # include the form description
+            _one_form_element_data['description'] = form.description
+
+            _elements_data.append(_one_form_element_data)
+            _one_form_element_data = {}
         return _elements_data
 
     def post(self, request, *args, **kwargs):
@@ -423,5 +451,3 @@ class ElementTypesList(APIView):
     @staticmethod
     def get(request, *args, **kwargs):
         return Response(element_types)
-
-
