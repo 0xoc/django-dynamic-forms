@@ -376,7 +376,7 @@ class FormFilterView(APIView):
                     answer_data[answer.value_field]
 
             # include the form description
-            _one_form_element_data['description'] = form.description
+            # _one_form_element_data['description'] = form.description
 
             _elements_data.append(_one_form_element_data)
             _one_form_element_data = {}
