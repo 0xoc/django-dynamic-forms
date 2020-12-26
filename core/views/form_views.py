@@ -14,7 +14,7 @@ from core.permissions import IsLoggedIn, IsSuperuser
 from core.serializers.FormSerializers.common_serializers import CharFieldSerializer, ElementsSetOrder, FieldsSetOrder
 from core.serializers.FormSerializers.create_serializers import SubFormRawCreateSerializer, FieldRawCreateSerializer, \
     TemplateRawCreateSerializer, FormCreateSerializer, get_create_serializer, get_update_serializer, \
-    get_set_value_serializer, get_raw_converter_serializer
+    get_set_value_serializer, get_raw_converter_serializer, get_condition_update_serializer
 from core.serializers.FormSerializers.retreive_serializers import SubFormRetrieveSerializer, TemplateRetrieveSerializer, \
     FormRetrieveSerializer, get_retrieve_serializer, FormSimpleRetrieveSerializer, FormFilterSerializer, \
     TemplateSimpleRetrieveSerializer
@@ -241,6 +241,19 @@ class UpdateElement(RetrieveUpdateDestroyAPIView):
     def get_serializer_class(self):
         """Get serializer based on filed type"""
         return get_update_serializer(self.kwargs.get('element_type'))
+
+    def get_object(self):
+        return get_object_or_404(elements.get(self.kwargs.get('element_type')),
+                                 pk=self.kwargs.get('element_id'))
+
+
+class ConditionUpdateElement(RetrieveUpdateDestroyAPIView):
+    """ Update element condition fields """
+    permission_classes = [IsLoggedIn, IsSuperuser]
+
+    def get_serializer_class(self):
+        """Get serializer based on filed type"""
+        return get_condition_update_serializer(self.kwargs.get('element_type'))
 
     def get_object(self):
         return get_object_or_404(elements.get(self.kwargs.get('element_type')),

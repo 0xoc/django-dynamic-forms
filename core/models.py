@@ -65,6 +65,10 @@ class SubForm(models.Model):
     order = models.IntegerField(default=0)
     template = models.ForeignKey(Template, related_name="sub_forms", on_delete=models.CASCADE)
 
+    condition_element_type = models.CharField(max_length=255, blank=True, null=True)
+    condition_element_pk = models.IntegerField(blank=True, null=True)
+    condition_element_value = models.CharField(max_length=255, blank=True, null=True)
+
     def __str__(self):
         return "%s - %s" % (str(self.template), str(self.title))
 
@@ -77,6 +81,10 @@ class Field(models.Model):
     title = models.CharField(max_length=255, blank=True, null=True)
     order = models.IntegerField(default=0)
     is_grid = models.BooleanField(default=False)
+
+    condition_element_type = models.CharField(max_length=255, blank=True, null=True)
+    condition_element_pk = models.IntegerField(blank=True, null=True)
+    condition_element_value = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return "%s - %s" % (str(self.sub_form), str(self.title))
@@ -108,6 +116,11 @@ class Element(models.Model):
 
     # Ex.: Input, checkbox, datetime, ...
     type = "ABC"
+
+    # show this element based on some condition
+    condition_element_type = models.CharField(max_length=255, blank=True, null=True)
+    condition_element_pk = models.IntegerField(blank=True, null=True)
+    condition_element_value = models.CharField(max_length=255, blank=True, null=True)
 
     # some element may have more than one value at a given time (Ex. Check box)
     # these elements save their values in "values" field as a CharField model

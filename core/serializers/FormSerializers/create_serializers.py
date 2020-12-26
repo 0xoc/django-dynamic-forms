@@ -84,6 +84,24 @@ def get_create_serializer(element_type):
     return _CreateSerializer
 
 
+def get_condition_update_serializer(element_type):
+    """
+    :param element_type: type of the element
+    :return: a serializer that can be used to update the three condition field
+    """
+
+    class _Serializer(serializers.ModelSerializer):
+
+        class Meta:
+            model = elements.get(element_type)
+            fields = ['pk', 'condition_element_type',
+                      'condition_element_pk',
+                      'condition_element_value',
+                      ]
+
+    return _Serializer
+
+
 def get_update_serializer(element_type):
     class UpdateSerializer(serializers.ModelSerializer):
         data = DataSerializer(many=True)
@@ -180,7 +198,11 @@ class SubFormRawCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SubForm
-        fields = ['pk', 'title', 'description', 'order', 'template', ]
+        fields = ['pk', 'title', 'description',
+                  'condition_element_type',
+                  'condition_element_pk',
+                  'condition_element_value',
+                  'order', 'template', ]
 
 
 class FieldRawCreateSerializer(serializers.ModelSerializer):
@@ -191,7 +213,11 @@ class FieldRawCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Field
-        fields = ['pk', 'title', 'sub_form', 'order', 'is_grid']
+        fields = ['pk', 'title', 'sub_form',
+                  'condition_element_type',
+                  'condition_element_pk',
+                  'condition_element_value',
+                  'order', 'is_grid']
 
 
 class FormCreateSerializer(serializers.ModelSerializer):
