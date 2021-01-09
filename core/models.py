@@ -31,6 +31,8 @@ class Template(models.Model):
 
     access_level = models.PositiveBigIntegerField(default=0)
 
+    is_paginated = models.BooleanField(default=False)
+
     @property
     def forms_count(self):
         return self.forms.count()

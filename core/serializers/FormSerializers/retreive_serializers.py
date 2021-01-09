@@ -148,7 +148,7 @@ class TemplateRetrieveSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Template
-        fields = ['pk', 'creator', "sub_forms", "title", 'forms_count', 'access_level']
+        fields = ['pk', 'creator', "sub_forms", "title", 'forms_count', 'access_level', 'is_paginated']
 
 
 class TemplateSimpleRetrieveSerializer(serializers.ModelSerializer):
